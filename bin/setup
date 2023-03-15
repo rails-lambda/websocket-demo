@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+
+echo '== Installing dependencies =='
+bundle install
+
+echo "== Preparing database =="
+./bin/rails db:prepare
+
+echo "== Removing old logs and tempfiles =="
+./bin/rails log:clear tmp:clear
+
+echo "== Restarting application server =="
+./bin/rails restart
+
+# ./bin/yarn
