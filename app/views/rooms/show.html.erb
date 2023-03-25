@@ -1,3 +1,5 @@
+<%= turbo_stream_from(@room) %>
+
 <%= turbo_frame_tag "room", class: "d-flex flex-row align-items-start" do %>
   <h1 class="flex-fill">Room: <%= @room.name %></h1>
   <div class="btn-group mt-1" role="group" aria-label="Room Actions">

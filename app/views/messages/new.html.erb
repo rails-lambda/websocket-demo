@@ -1,6 +1,6 @@
 <%= turbo_frame_tag "new_message", target: '_top' do %>
-  <%= bootstrap_form_with(model: [@message.room, @message]) do |f| %>
+  <%= bootstrap_form_with(model: [@message.room, @message],
+      data: {controller: 'send-message', action: 'turbo:submit-end->send-message#reset'}) do |f| %>
     <%= f.text_field :content, hide_label: true, append: f.primary('📨 Send') %>
   <% end %>
 <% end %>
- 
