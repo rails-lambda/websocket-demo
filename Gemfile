@@ -3,6 +3,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 gem "rails"
 
+gem "bootstrap_form"
 gem "importmap-rails"
 gem "lamby"
 gem "mysql2", "~> 0.5"

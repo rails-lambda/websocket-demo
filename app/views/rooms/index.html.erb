@@ -1,15 +1,11 @@
-<h1>Rooms:</h1>
+<div class="btn-group btn-group-sm mt-2 float-end" role="group" aria-label="Rooms Actions">
+  <%= link_to "🆕 New Room", new_room_path, class: 'btn btn-outline-primary' %>
+</div>
 
-<%= render partial: 'application/notice' %>
+<h1>Rooms:</h1>
 
 <div id="rooms">
   <% @rooms.each do |room| %>
     <%= render partial: 'room', locals: { room: room, chat: true } %>
   <% end %>
 </div>
-
-<br/>
-
-<h2>Actions:</h2>
-
-<%= link_to "🆕 New Room!", new_room_path %>

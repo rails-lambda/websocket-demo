@@ -7,7 +7,7 @@
 ./bin/rails stimulus:install
 ```
 
-## Data Model
+## Data Model & Scaffold
 
 ```shell
 rails g scaffold room name:string

@@ -1,12 +1,10 @@
+<div class="btn-group btn-group-sm mt-2 float-end" role="group" aria-label="Rooms Actions">
+  <%= link_to "⬅️ Back", @message.room, class: 'btn btn-outline-primary' %>
+</div>
+
 <h1>New Message</h1>
 
-<%= form_with model: [@message.room, @message] do |form| %>
-  <div class="field">
-    <%= form.text_field :content %>
-    <%= form.submit "Send" %>
-  </div>
+<%= bootstrap_form_with(model: [@message.room, @message]) do |f| %>
+  <%= f.text_field :content %>
+  <%= f.primary 'Send' %>
 <% end %>
-
-<div>
-  <%= link_to "Back", @message.room %>
-</div>

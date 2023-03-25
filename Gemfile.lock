@@ -69,6 +69,9 @@ GEM
     addressable (2.8.1)
       public_suffix (>= 2.0.2, < 6.0)
     bindex (0.8.1)
+    bootstrap_form (5.1.0)
+      actionpack (>= 5.2)
+      activemodel (>= 5.2)
     builder (3.2.4)
     capybara (3.38.0)
       addressable
@@ -217,6 +220,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  bootstrap_form
   capybara
   debug
   importmap-rails

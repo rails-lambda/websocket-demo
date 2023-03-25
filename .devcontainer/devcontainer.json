@@ -1,6 +1,13 @@
 {
   "service": "app",
   "dockerComposeFile": "docker-compose.yml",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rebornix.ruby"
+      ]
+    }
+  },
   "features": {
     "ghcr.io/devcontainers/features/common-utils": {},
     "ghcr.io/devcontainers/features/node:latest": {},
