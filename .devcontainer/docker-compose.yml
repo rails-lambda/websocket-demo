@@ -16,5 +16,8 @@ services:
     volumes: ["data-mysql:/var/lib/mysql"]
     healthcheck:
       test: ["CMD", "mysql", "-h", "127.0.0.1", "-u", "root", "-proot"]
+  redis:
+    image: redis
+    restart: unless-stopped
 volumes:
   data-mysql:

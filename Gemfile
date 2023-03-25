@@ -14,10 +14,12 @@ gem "jbuilder"
 
 group :development, :test do
   gem "debug"
-  gem "webrick"
+  gem "puma"
 end
 
 group :development do
+  gem "redis"
+  gem "hotwire-livereload"
   gem "web-console"
 end
 
