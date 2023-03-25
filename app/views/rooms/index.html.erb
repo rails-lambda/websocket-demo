@@ -1,0 +1,15 @@
+<h1>Rooms:</h1>
+
+<%= render partial: 'application/notice' %>
+
+<div id="rooms">
+  <% @rooms.each do |room| %>
+    <%= render partial: 'room', locals: { room: room, chat: true } %>
+  <% end %>
+</div>
+
+<br/>
+
+<h2>Actions:</h2>
+
+<%= link_to "🆕 New Room!", new_room_path %>

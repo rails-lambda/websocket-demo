@@ -1,0 +1,7 @@
+<div id="<%= dom_id room %>">
+  <strong>Name:</strong>
+  <%= room.name %>
+  <% if chat %>
+    <%= link_to "💬 Chat", room %>
+  <% end %>
+</div>

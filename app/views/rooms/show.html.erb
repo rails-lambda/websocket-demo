@@ -1,0 +1,23 @@
+<h1>Room: <%= @room.name %></h1>
+
+<%= render partial: 'application/notice' %>
+
+<div class="btn-group btn-group-sm mb-3" role="group" aria-label="Room Actions">
+  <%= link_to "⬅️ Back", rooms_path, class: 'btn btn-outline-primary' %>
+  <%= link_to "📝 Edit", edit_room_path(@room), class: 'btn btn-outline-primary' %>
+  <%= link_to "🗑️ Destroy", @room, 
+    class: 'btn btn-sm btn-outline-primary', 
+    data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' } %>
+</div>
+
+<br/>
+
+<ul id="messages">
+  <%= render @room.messages %>
+</ul>
+
+<br/>
+
+<h2>Actions:</h2>
+
+<%= link_to "New Message", new_room_message_path(@room) %>
