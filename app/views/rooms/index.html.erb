@@ -1,11 +1,13 @@
-<div class="btn-group btn-group-sm mt-2 float-end" role="group" aria-label="Rooms Actions">
-  <%= link_to "🆕 New Room", new_room_path, class: 'btn btn-outline-primary' %>
+
+<div class="d-flex flex-row align-items-start">
+  <h1 class="flex-fill">Rooms</h1>
+  <div class="btn-group mt-1" role="group" aria-label="Rooms Actions">
+    <%= link_to "🆕 New Room", new_room_path, class: 'btn btn-outline-primary' %>
+  </div>
 </div>
 
-<h1>Rooms:</h1>
-
-<div id="rooms">
+<ul id="rooms" class="list-group mt-2">
   <% @rooms.each do |room| %>
-    <%= render partial: 'room', locals: { room: room, chat: true } %>
+    <%= render partial: 'room', locals: { room: room } %>
   <% end %>
-</div>
+</ul>

@@ -13,3 +13,19 @@
  *= require_tree .
  *= require_self
  */
+
+/* turbo-frame {
+  display: block;
+  border: 1px dashed gray;
+} */
+
+turbo-frame#new_message {
+  height: 40px;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+turbo-frame input[type=text]:focus {
+  outline: none;
+  box-shadow: none;
+}

@@ -1,10 +1,6 @@
-<div class="btn-group btn-group-sm mt-2 float-end" role="group" aria-label="Rooms Actions">
-  <%= link_to "⬅️ Back", @message.room, class: 'btn btn-outline-primary' %>
-</div>
-
-<h1>New Message</h1>
-
-<%= bootstrap_form_with(model: [@message.room, @message]) do |f| %>
-  <%= f.text_field :content %>
-  <%= f.primary 'Send' %>
+<%= turbo_frame_tag "new_message", target: '_top' do %>
+  <%= bootstrap_form_with(model: [@message.room, @message]) do |f| %>
+    <%= f.text_field :content, hide_label: true, append: f.primary('📨 Send') %>
+  <% end %>
 <% end %>
+ 

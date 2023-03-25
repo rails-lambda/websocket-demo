@@ -1,7 +1,9 @@
-<div id="<%= dom_id room %>">
-  <strong>Name:</strong>
-  <%= room.name %>
-  <% if chat %>
-    <%= link_to "💬 Chat", room %>
-  <% end %>
-</div>
+<li id="<%= dom_id(room) %>" class="list-group-item d-flex justify-content-between align-items-center">
+  <div class="ms-2 me-auto">
+    <strong class="fs-4">
+      <%= link_to room.name, room %>
+    </strong>
+  </div>
+  <span class="fs-2">💬</span>
+</li>
+

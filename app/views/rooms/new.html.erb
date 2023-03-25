@@ -1,7 +1,9 @@
-<div class="btn-group btn-group-sm mt-2 float-end" role="group" aria-label="Rooms Actions">
-  <%= link_to "⬅️ Back", rooms_path, class: 'btn btn-outline-primary' %>
-</div>
 
-<h1>New room</h1>
+<div class="d-flex flex-row align-items-start">
+  <h1 class="flex-fill">New Room</h1>
+  <div class="btn-group mt-1" role="group" aria-label="New Room">
+    <%= link_to "⬅️ Back", rooms_path, class: 'btn btn-outline-primary' %>
+  </div>
+</div>
 
 <%= render "form" , room: @room %>

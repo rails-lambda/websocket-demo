@@ -1,7 +1,8 @@
-<div class="btn-group btn-group-sm mt-2 float-end" role="group" aria-label="Rooms Actions">
-  <%= link_to "⬅️ Back", @room, class: 'btn btn-outline-primary' %>
-</div>
-
-<h1>Editing Room</h1>
-
-<%= render "form", room: @room %>
+<%= turbo_frame_tag "room", class: "d-flex flex-row align-items-start " do %>
+  <h1 style="padding-right:10px;">Room:</h1>
+  <%= bootstrap_form_with(model: @room, class: 'd-box flex-fill mt-1') do |f| %>
+    <%= f.text_field :name, wrapper_class: false, hide_label: true, append: [
+        link_to("⬅️ Cancel", @room, class: 'btn btn-outline-secondary'),
+        f.primary('Rename') ] %>
+  <% end %>
+<% end %>

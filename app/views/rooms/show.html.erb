@@ -1,20 +1,23 @@
-<div class="btn-group btn-group-sm mt-2 float-end" role="group" aria-label="Room Actions">
-  <%= link_to "📝 Edit", edit_room_path(@room), class: 'btn btn-outline-primary' %>
-  <%= link_to "🗑️ Destroy", @room, 
-    class: 'btn btn-sm btn-outline-primary', 
-    data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' } %>
-</div>
+<%= turbo_frame_tag "room", class: "d-flex flex-row align-items-start" do %>
+  <h1 class="flex-fill">Room: <%= @room.name %></h1>
+  <div class="btn-group mt-1" role="group" aria-label="Room Actions">
+    <%= link_to "📝 Edit", edit_room_path(@room), class: 'btn btn-outline-primary' %>
+    <%= link_to "🗑️ Destroy", @room, 
+      class: 'btn btn-outline-primary', 
+      data: { turbo_method: :delete, turbo_confirm: 'Are you sure?', turbo_frame: '_top' } %>
+  </div>
+<% end %>
 
-<h1>Room: <%= @room.name %></h1>
+<h5 class="text-primary">
+  Send Message:
+</h5>
 
-<br/>
+<%= turbo_frame_tag "new_message", src: new_room_message_path(@room), target: '_top' %>
 
-<ul id="messages">
-  <%= render @room.messages %>
+<h5 class="text-primary">
+  All Messages:
+</h5>
+
+<ul id="messages" class="list-group">
+  <%= render @room.messages.recent %>
 </ul>
-
-<br/>
-
-<h2>Actions:</h2>
-
-<%= link_to "New Message", new_room_message_path(@room) %>

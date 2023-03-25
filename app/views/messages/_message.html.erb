@@ -1,3 +1,8 @@
-<li id="<%= dom_id(message) %>">
-  <%= message.created_at.to_s(:short) %>: <%= message.content %>
+<li id="<%= dom_id(message) %>" class="list-group-item d-flex justify-content-between align-items-start p-0">
+  <div class="ms-0 me-3 px-3 py-2">
+    <%= message.content %>
+  </div>
+  <span class="badge bg-dark-subtle rounded-top-0">
+    <%= message.created_at.to_fs(:short) %>
+  </span>
 </li>
