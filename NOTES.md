@@ -20,8 +20,19 @@ rails db:migrate
 
 Are these temporary?
 
-* Swap webrick for puma. 
+```ruby
+group :development, :test do
+  gem "puma"
+end
+
+group :development do
+  gem "redis"
+  gem "hotwire-livereload"
+end
+```
+
+* Swap `webrick` for `puma` in `development, test` groups.
 * Add Hotwire LiveReload: https://github.com/kirillplatonov/hotwire-livereload
-* Add redis service to the devcontainer.
+* Add `redis` to `development` group and service to the devcontainer.
 * Change cable.yml to redis v. async adapter.
 

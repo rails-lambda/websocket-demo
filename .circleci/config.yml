@@ -63,13 +63,13 @@ jobs:
           cmd: ./bin/deploy
 workflows:
   test:
-    when: { equal: [ test, << pipeline.parameters.workflow >> ] }
+    # when: { equal: [ test, << pipeline.parameters.workflow >> ] }
     jobs:
       - devcontainer
       - test-job:
           requires: [devcontainer]
   deploy:
-    when: { equal: [ deploy, << pipeline.parameters.workflow >> ] }
+    # when: { equal: [ deploy, << pipeline.parameters.workflow >> ] }
     jobs:
       - devcontainer
       - deploy-job:
