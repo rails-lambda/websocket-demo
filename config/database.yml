@@ -8,11 +8,11 @@ default: &default
 
 development:
   <<: *default
-  database: lamby-w-development
+  database: lamby-ws-development
 
 test:
   <<: *default
-  database: lamby-w-test
+  database: lamby-ws-test
 
 production:
   <<: *default

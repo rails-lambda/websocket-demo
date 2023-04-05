@@ -59,7 +59,7 @@ echo "== SAM deploy =="
 sam deploy \
   --region "$AWS_REGION" \
   --template-file ./.aws-sam/build/packaged.yaml \
-  --stack-name "lamby-w-${RAILS_ENV}" \
+  --stack-name "lamby-ws-${RAILS_ENV}" \
   --image-repository "$IMAGE_REPOSITORY" \
   --capabilities "CAPABILITY_IAM" \
   --parameter-overrides \
