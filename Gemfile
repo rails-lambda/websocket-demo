@@ -3,6 +3,10 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 gem "rails"
 
+# TEMP: LambdaCable
+gem "aws-sdk-apigatewaymanagementapi"
+gem "aws-sdk-dynamodb"
+
 gem "bootstrap_form"
 gem "importmap-rails"
 gem "lamby"
