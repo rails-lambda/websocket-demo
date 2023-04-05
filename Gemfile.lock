@@ -68,6 +68,21 @@ GEM
       tzinfo (~> 2.0)
     addressable (2.8.1)
       public_suffix (>= 2.0.2, < 6.0)
+    aws-eventstream (1.2.0)
+    aws-partitions (1.735.0)
+    aws-sdk-apigatewaymanagementapi (1.32.0)
+      aws-sdk-core (~> 3, >= 3.165.0)
+      aws-sigv4 (~> 1.1)
+    aws-sdk-core (3.171.0)
+      aws-eventstream (~> 1, >= 1.0.2)
+      aws-partitions (~> 1, >= 1.651.0)
+      aws-sigv4 (~> 1.5)
+      jmespath (~> 1, >= 1.6.1)
+    aws-sdk-dynamodb (1.83.0)
+      aws-sdk-core (~> 3, >= 3.165.0)
+      aws-sigv4 (~> 1.1)
+    aws-sigv4 (1.5.2)
+      aws-eventstream (~> 1, >= 1.0.2)
     bindex (0.8.1)
     bootstrap_form (5.1.0)
       actionpack (>= 5.2)
@@ -107,6 +122,7 @@ GEM
     jbuilder (2.11.5)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
+    jmespath (1.6.2)
     lamby (4.0.2)
       rack
     listen (3.8.0)
@@ -236,6 +252,8 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  aws-sdk-apigatewaymanagementapi
+  aws-sdk-dynamodb
   bootstrap_form
   capybara
   debug
