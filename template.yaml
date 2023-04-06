@@ -22,6 +22,7 @@ Globals:
     Environment:
       Variables:
         RAILS_ENV: !Ref RailsEnv
+        DATABASE_URL: x-crypteia-ssm:/lamby-ws/env/DATABASE_URL
     Timeout: 30
 
 Resources:
@@ -37,6 +38,12 @@ Resources:
         AuthType: NONE
       MemorySize: 1792
       PackageType: Image
+      Policies:
+      - Statement:
+        - Effect: Allow
+          Action: ["ssm:Get*", "ssm:Describe*"]
+          Resource:
+            - !Sub arn:aws:ssm:*:${AWS::AccountId}:parameter/lamby-ws/env/*
 
   WSTable:
     Type: AWS::DynamoDB::Table

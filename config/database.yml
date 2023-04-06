@@ -5,10 +5,11 @@ default: &default
   username: root
   password: <%= ENV["MYSQL_ROOT_PASSWORD"] %>
   host: <%= ENV.fetch("MYSQL_HOST") { "localhost" } %>
+  url: <%= ENV["DATABASE_URL"] %>
 
 development:
   <<: *default
-  database: lamby-ws-development
+  database: lamby-ws
 
 test:
   <<: *default
