@@ -8,6 +8,7 @@ gem "aws-sdk-apigatewaymanagementapi"
 gem "aws-sdk-dynamodb"
 
 gem "bootstrap_form"
+gem "faker"
 gem "importmap-rails"
 gem "lamby"
 gem "mysql2", "~> 0.5"
