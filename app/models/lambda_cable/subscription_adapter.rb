@@ -3,29 +3,27 @@ module LambdaCable
     prepend ActionCable::SubscriptionAdapter::ChannelPrefix
     
     # attr_reader :logger, :server
-    # def initialize(server)
-    #   @server = server
-    #   @logger = @server.logger
-    # end
+    def initialize(server)
+      super
+      puts "[DEBUG] SubscriptionAdapter#initialize #{server.inspect}"
+      # @server = server
+      # @logger = @server.logger
+    end
 
     def broadcast(channel, payload)
-      puts "[DEBUG] broadcasting to #{channel.inspect} with payload #{payload.inspect}"
-      raise NotImplementedError
+      puts "[DEBUG] SubscriptionAdapter#broadcast to #{channel.inspect} with payload #{payload.inspect}"
     end
 
     def subscribe(channel, message_callback, success_callback = nil)
-      puts "[DEBUG] subscribing to #{channel} with message_callback #{message_callback.inspect} and success_callback #{success_callback.inspect}"
-      raise NotImplementedError
+      puts "[DEBUG] SubscriptionAdapter#subscribe to #{channel.inspect} with message_callback #{message_callback.inspect} and success_callback #{success_callback.inspect}"
     end
 
     def unsubscribe(channel, message_callback)
-      puts "[DEBUG] unsubscribing from #{channel} with message_callback #{message_callback.inspect}"
-      raise NotImplementedError
+      puts "[DEBUG] SubscriptionAdapter#unsubscribe from #{channel.inspect} with message_callback #{message_callback.inspect}"
     end
 
     def shutdown
-      puts "[DEBUG] shutting down"
-      raise NotImplementedError
+      puts "[DEBUG] SubscriptionAdapter#shutdown"
     end
 
     # def identifier

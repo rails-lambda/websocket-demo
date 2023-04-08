@@ -31,7 +31,9 @@ module LambdaCable
     Handler.default(event: event, context: context)
   end
 
-  def dissconnect(event:, context:)
+  def disconnect(event:, context:)
     Handler.disconnect(event: event, context: context)
   end
+
+  extend self
 end

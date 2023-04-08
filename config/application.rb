@@ -18,5 +18,9 @@ module LambyW
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # LambyWS
+    # -------
+    config.session_store :cookie_store, expire_after: 1.day, key: '_session'
   end
 end

@@ -62,3 +62,22 @@ end
 gem "aws-sdk-apigatewaymanagementapi"
 gem "aws-sdk-dynamodb"
 ```
+
+## Configure Host
+
+* TODO: Refactor to ENV vars?
+* TODO: Can this be in LambyCable?
+
+```ruby
+config.action_cable.url = 'wss://911769d0hb.execute-api.us-east-1.amazonaws.com/cable'
+config.action_cable.allowed_request_origins = [ /zcmyp26ogmtmmqjym24vb35pju0rmysm.lambda-url.us-east-1.on.aws/ ]
+```
+
+* Call out Lambda Function URLs but you can use CloudFront to map to a single domain.
+
+Maybe needed. I did have to add this to the application.rb for easy session name.
+
+```ruby
+config.session_store :cookie_store, expire_after: 1.day, key: '_session'
+```
+

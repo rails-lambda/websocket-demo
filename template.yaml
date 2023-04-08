@@ -39,11 +39,11 @@ Resources:
       MemorySize: 1792
       PackageType: Image
       Policies:
-      - Statement:
-        - Effect: Allow
-          Action: ["ssm:Get*", "ssm:Describe*"]
-          Resource:
-            - !Sub arn:aws:ssm:*:${AWS::AccountId}:parameter/lamby-ws/env/*
+        - Statement:
+          - Effect: Allow
+            Action: ["ssm:Get*", "ssm:Describe*"]
+            Resource:
+              - !Sub arn:aws:ssm:*:${AWS::AccountId}:parameter/lamby-ws/env/*
 
   WSTable:
     Type: AWS::DynamoDB::Table
@@ -89,7 +89,7 @@ Resources:
   WSStage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
-      StageName: !Ref RailsEnv
+      StageName: cable
       DeploymentId: !Ref WSDeployment
       ApiId: !Ref WSApi
 

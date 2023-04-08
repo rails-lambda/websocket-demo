@@ -3,12 +3,14 @@ module LambdaCable
     extend self
 
     def connect(event:, context:)
-      puts(event.inspect)
+      puts(event.to_json)
+      puts(context.to_json)
       return { statusCode: 200 }
     end
 
     def default(event:, context:)
-      puts(event.inspect)
+      puts(event.to_json)
+      puts(context.to_json)
       # response = CLIENT.post_to_connection({
       #   data: event.body,
       #   connection_id: event.requestContext.connectionId
@@ -17,7 +19,8 @@ module LambdaCable
     end
 
     def disconnect(event:, context:)
-      puts(event.inspect)
+      puts(event.to_json)
+      puts(context.to_json)
       return { statusCode: 200 }
     end
   end

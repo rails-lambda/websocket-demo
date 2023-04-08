@@ -91,8 +91,8 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  # LambyW
-  # ----------
+  # LambyWS
+  # -------
   logger = ActiveSupport::Logger.new(STDOUT)
   logger.formatter = ActiveSupport::Logger::SimpleFormatter.new
   config.logger    = logger
@@ -106,4 +106,6 @@ Rails.application.configure do
   config.lograge.custom_payload do |controller|
     { requestid: controller.request.request_id }
   end
+  config.action_cable.url = 'wss://911769d0hb.execute-api.us-east-1.amazonaws.com/cable'
+  config.action_cable.allowed_request_origins = [ /zcmyp26ogmtmmqjym24vb35pju0rmysm.lambda-url.us-east-1.on.aws/ ]
 end
