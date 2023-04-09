@@ -1,6 +1,13 @@
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
     identified_by :current_user
+    
+    def initialize(server, env, coder: ActiveSupport::JSON)
+      super
+      puts "[DEBUG] ApplicationCable::Connection#initialize"
+      puts server.inspect
+      puts env.inspect
+    end
 
     def connect
       puts "[DEBUG] ApplicationCable::Connection#connect"

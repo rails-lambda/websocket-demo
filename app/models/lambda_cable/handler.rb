@@ -6,8 +6,8 @@ module LambdaCable
       puts "[DEBUG] LambdaCable::Handler#connect"
       puts(event.to_json)
       puts(context.to_json)
-      Lamby.cmd event: event, context: context
-      return { statusCode: 200 }
+      # Lamby.cmd event: event, context: context
+      { statusCode: 200, body: 'Connected.' };
     end
 
     def default(event:, context:)

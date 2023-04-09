@@ -23,7 +23,7 @@ group :development, :test do
 end
 
 group :development do
-  gem "hotwire-livereload"
+  # gem "hotwire-livereload"
   gem "planetscale_rails"
   gem "redis"
   gem "web-console"

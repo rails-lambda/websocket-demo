@@ -17,7 +17,6 @@ require 'lambda_cable/version'
 # require 'lambda_cable/subscription_manager'
 # require 'lambda_cable/subscription_adapter'
 
-
 module LambdaCable
   extend ActiveSupport::Autoload
 

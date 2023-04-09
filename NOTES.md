@@ -1,8 +1,11 @@
 ## Questions/Followups
 
-- We we really need unique `DockerTag` properties? Maybe we can remove that?
-- Within the `WSPolicy` call out how this needs the `RailsLambda` name and `RailsLambdaRole`.
-  - If you make your own Role, use that name instead!
+[ ] We we really need unique `DockerTag` properties? Maybe we can remove that?
+[ ] Within the `WSPolicy` call out how this needs the `RailsLambda` name and `RailsLambdaRole`.
+[ ] If you make your own Role, use that name instead!
+[ ] Does any of the ActionCable uses ActiveJob for background processing?
+[ ] Do we need `channel_prefix` in any way? DynamoDB optimization maybe?
+[ ] Where does `Sec-WebSocket-Protocol: actioncable-v1-json` come in?
 
 ## Implementation Notes
 

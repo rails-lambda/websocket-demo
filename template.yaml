@@ -124,6 +124,7 @@ Resources:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref WSApi
+      AuthorizationType: NONE
       RouteKey: "$connect"
       OperationName: WSConnectRoute
       Target: !Sub integrations/${WSConnectIntegration}
@@ -162,6 +163,7 @@ Resources:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref WSApi
+      AuthorizationType: NONE
       RouteKey: "$default"
       OperationName: WSDefaultRoute
       Target: !Sub integrations/${WSDefaultIntegration}
@@ -200,6 +202,7 @@ Resources:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref WSApi
+      AuthorizationType: NONE
       RouteKey: "$disconnect"
       OperationName: WSDisconnectRoute
       Target: !Sub integrations/${WSDisconnectIntegration}
