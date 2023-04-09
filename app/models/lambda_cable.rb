@@ -5,6 +5,7 @@
 # s.add_dependency "aws-sdk-apigatewaymanagementapi"
 # s.add_dependency "aws-sdk-dynamodb"
 
+require 'lamby'
 require 'action_cable'
 require 'lambda_cable/version'
 

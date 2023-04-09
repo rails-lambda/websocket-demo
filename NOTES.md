@@ -81,3 +81,45 @@ Maybe needed. I did have to add this to the application.rb for easy session name
 config.session_store :cookie_store, expire_after: 1.day, key: '_session'
 ```
 
+## Adding CloudFront Origin
+
+You will need the the API Gateway's Physical ID that was created in your CloudFormation stack. You can navigate to that stack, click the "Resources" tab and find the `WSApi` Logical ID matching the name in your `template.yaml` file. The Physical ID should look something like `3iku9itbbb`. This along with the AWS Region where you stack is deployed will be used for the origin domain.
+
+From the CloudFront Distribution created in the Custom Domain Names
+
+- Click "Origins" tab
+- Click "Create origin" button
+- Origin domain: Ex: 3iku9itbbb.execute-api.us-east-1.amazonaws.com (⚠️ Use proper region)
+- Protocol: HTTPS only
+  Minimum origin SSL protocol: TLSv1
+- Origin path: cable
+- Add Custom Header: X-Forwarded-Host myapp.example.com
+
+Now add a new behavior using this origin.
+
+- Click "Behaviors" tab
+- Click "Create behavior" 
+- Path pattern: 
+- Origin (From previous step)
+- Viewer protocol policy: HTTPS only
+- Allowed HTTP Methods: GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE
+- 🔘 Cache policy and origin request policy (recommended)
+  - Cache policy: Caching Disabled
+  - Origin request policy: WebSockets
+
+https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-working-with.websockets.html
+
+From CloudFront main screen:
+
+- Click "Policies" in left panel
+- Click "Origin request" tab
+- Click "Create origin request policy" button
+- Name: WebSockets
+- Headers: Include the following headers (Add Custom)
+  - Sec-WebSocket-Key
+  - Sec-WebSocket-Version
+  - Sec-WebSocket-Protocol
+  - Sec-WebSocket-Accept
+  - Sec-WebSocket-Extensions
+- Query strings: None
+- Cookies: All
