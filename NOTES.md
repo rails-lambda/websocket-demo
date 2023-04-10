@@ -126,3 +126,30 @@ From CloudFront main screen:
   - Sec-WebSocket-Extensions
 - Query strings: None
 - Cookies: All
+
+## Getting /cable in $connect?
+
+Can `RouteKey` be something like this? 
+
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-route.html#cfn-apigatewayv2-route-authorizationtype
+
+```yaml
+RouteKey: "cable/$connect"
+```
+
+Add this to the event?
+
+```json
+{
+  "resource": "/cable",
+  "path": "/cable",
+  "httpMethod": "GET",
+  "requestContext": {
+    "resourcePath": "/cable",
+  }
+}
+```
+
+## Do I Need An Integration Response?
+
+...
