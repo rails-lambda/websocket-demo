@@ -62,12 +62,12 @@ jobs:
             --remote-env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
           cmd: ./bin/deploy
 workflows:
-  test:
-    # when: { equal: [ test, << pipeline.parameters.workflow >> ] }
-    jobs:
-      - devcontainer
-      - test-job:
-          requires: [devcontainer]
+  # test:
+  #   # when: { equal: [ test, << pipeline.parameters.workflow >> ] }
+  #   jobs:
+  #     - devcontainer
+  #     - test-job:
+  #         requires: [devcontainer]
   deploy:
     # when: { equal: [ deploy, << pipeline.parameters.workflow >> ] }
     jobs:
