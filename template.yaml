@@ -125,7 +125,7 @@ Resources:
     Properties:
       ApiId: !Ref WSApi
       AuthorizationType: NONE
-      RouteKey: "cable/$connect"
+      RouteKey: "$connect"
       OperationName: WSConnectRoute
       Target: !Sub integrations/${WSConnectIntegration}
 

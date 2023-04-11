@@ -153,3 +153,6 @@ Add this to the event?
 ## Do I Need An Integration Response?
 
 ...
+
+wscat -c wss://3iku9itbbb.execute-api.us-east-1.amazonaws.com/cable
+wscat -c wss://lamby-ws.custominktech.com/cable
