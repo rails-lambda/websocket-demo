@@ -5,7 +5,7 @@ module LambdaCable
     # attr_reader :logger, :server
     def initialize(server)
       super
-      puts "[DEBUG] SubscriptionAdapter#initialize #{server.inspect}"
+      puts "[DEBUG] SubscriptionAdapter#initialize"
       # @server = server
       # @logger = @server.logger
     end

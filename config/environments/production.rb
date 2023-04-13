@@ -101,9 +101,9 @@ Rails.application.configure do
     'X-Lamby-Base64' => '1'
   }
   config.log_level = :info
-  config.lograge.enabled = true
-  config.lograge.formatter = Lograge::Formatters::Json.new
-  config.lograge.custom_payload do |controller|
-    { requestid: controller.request.request_id }
-  end
+  # config.lograge.enabled = true
+  # config.lograge.formatter = Lograge::Formatters::Json.new
+  # config.lograge.custom_payload do |controller|
+  #   { requestid: controller.request.request_id }
+  # end
 end

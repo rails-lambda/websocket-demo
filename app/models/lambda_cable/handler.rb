@@ -10,7 +10,6 @@ module LambdaCable
       when '$default'
         default event: event, context: context
       when '$connect'
-        action_cable_server(event)
         connect event: event, context: context
       when '$disconnect'
         disconnect event: event, context: context
@@ -20,7 +19,10 @@ module LambdaCable
     private
 
     def connect(event:, context:)
-      { statusCode: 200 };
+      response = action_cable_server event, context
+      puts "[DEBUG] response: #{response.inspect}"
+      response
+      # { statusCode: 200 };
     end
 
     def default(event:, context:)
@@ -35,12 +37,19 @@ module LambdaCable
       return { statusCode: 200, body: '{"disconnect":"true"}' }
     end
 
-    def action_cable_server(event)
-      event = event_with_action_cable(event)
-      Lamby.cmd event: event, context: context, rack: :rest
+    # def action_cable_server(event, context)
+    #   event = event_with_action_cable_path(event)
+    #   klass = Lamby::Rack.lookup nil, event
+    #   env = klass.new(event, context).env
+    #   ActionCable.server.call(env)
+    # end
+
+    def action_cable_server(event, context)
+      event = event_with_action_cable_path(event)
+      Lamby.cmd event: event, context: context
     end
 
-    def event_with_action_cable!(event)
+    def event_with_action_cable_path(event)
       event.dup.tap do |event|
         event['path'] ||= '/cable'
         event['httpMethod'] ||= 'GET'

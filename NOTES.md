@@ -6,6 +6,7 @@
 [ ] Does any of the ActionCable uses ActiveJob for background processing?
 [ ] Do we need `channel_prefix` in any way? DynamoDB optimization maybe?
 [ ] Where does `Sec-WebSocket-Protocol: actioncable-v1-json` come in?
+[ ] Will this work? `ActionCable.server.remote_connections.where(current_user: User.find(1)).disconnect`
 
 ## Implementation Notes
 
