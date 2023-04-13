@@ -44,11 +44,6 @@ Resources:
             Action: ["ssm:Get*", "ssm:Describe*"]
             Resource:
               - !Sub arn:aws:ssm:*:${AWS::AccountId}:parameter/lamby-ws/env/*
-        - Statement:
-          - Effect: Allow
-            Action: ["execute-api:Invoke", "execute-api:ManageConnections"]
-            Resource: 
-              - !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WSApi}/*
 
   WSTable:
     Type: AWS::DynamoDB::Table
@@ -97,6 +92,20 @@ Resources:
       StageName: cable
       DeploymentId: !Ref WSDeployment
       ApiId: !Ref WSApi
+
+  WSPolicy:
+    Type: AWS::IAM::Policy
+    DependsOn: RailsLambdaRole
+    Properties:
+      PolicyName: !Sub "${RailsLambda}-ws-policy"
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: ["execute-api:Invoke", "execute-api:ManageConnections"]
+            Resource: 
+              - !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WSApi}/*
+      Roles:
+        - !Ref RailsLambdaRole
 
   WSConnectLambda:
     Type: AWS::Serverless::Function
