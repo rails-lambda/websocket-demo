@@ -154,5 +154,12 @@ Add this to the event?
 
 ...
 
+```bash
+aws apigatewaymanagementapi post-to-connection \
+  --endpoint-url "https://3iku9itbbb.execute-api.us-east-1.amazonaws.com/cable" \
+  --connection-id "DSc1wfYNoAMCKxg=" \
+  --data 'eyJ0eXBlIjoid2VsY29tZSJ9'
+
 wscat -c wss://3iku9itbbb.execute-api.us-east-1.amazonaws.com/cable
 wscat -c wss://lamby-ws.custominktech.com/cable
+```
