@@ -17,7 +17,7 @@ module ApplicationCable
     end
 
     private
-    
+
     def session_user
       User.find(session_user_name) if session_user_name.present?
     end

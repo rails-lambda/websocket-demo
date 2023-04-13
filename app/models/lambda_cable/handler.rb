@@ -2,19 +2,28 @@ module LambdaCable
   module Handler
     extend self
 
-    def connect(event:, context:)
-      puts "[DEBUG] LambdaCable::Handler#connect"
+    def cmd(event:, context:)
+      puts "[DEBUG] LambdaCable::Handler#cmd"
       puts(event.to_json)
       puts(context.to_json)
-      # Lamby.cmd event: event, context: context
-      { statusCode: 200, body: '{"connect":"true"}' };
+      case event['requestContext']['routeKey']
+      when '$default'
+        default event: event, context: context
+      when '$connect'
+        action_cable_server(event)
+        connect event: event, context: context
+      when '$disconnect'
+        disconnect event: event, context: context
+      end
+    end
+
+    private
+
+    def connect(event:, context:)
+      { statusCode: 200 };
     end
 
     def default(event:, context:)
-      puts "[DEBUG] LambdaCable::Handler#default"
-      puts(event.to_json)
-      puts(context.to_json)
-      Lamby.cmd event: event, context: context
       # response = CLIENT.post_to_connection({
       #   data: event.body,
       #   connection_id: event.requestContext.connectionId
@@ -23,11 +32,22 @@ module LambdaCable
     end
 
     def disconnect(event:, context:)
-      puts "[DEBUG] LambdaCable::Handler#disconnect"
-      puts(event.to_json)
-      puts(context.to_json)
-      Lamby.cmd event: event, context: context
       return { statusCode: 200, body: '{"disconnect":"true"}' }
+    end
+
+    def action_cable_server(event)
+      event = event_with_action_cable(event)
+      Lamby.cmd event: event, context: context, rack: :rest
+    end
+
+    def event_with_action_cable!(event)
+      event.dup.tap do |event|
+        event['path'] ||= '/cable'
+        event['httpMethod'] ||= 'GET'
+        event['requestContext'].merge!({
+          "resourcePath": "/cable"
+        })
+      end
     end
   end
 end

@@ -118,7 +118,7 @@ Resources:
       PackageType: Image
       Role: !GetAtt RailsLambdaRole.Arn
       ImageConfig:
-        Command: ["config/environment.LambdaCable.connect"]
+        Command: ["config/environment.LambdaCable.cmd"]
   
   WSConnectRoute:
     Type: AWS::ApiGatewayV2::Route
@@ -157,7 +157,7 @@ Resources:
       PackageType: Image
       Role: !GetAtt RailsLambdaRole.Arn
       ImageConfig:
-        Command: ["config/environment.LambdaCable.default"]
+        Command: ["config/environment.LambdaCable.cmd"]
 
   WSDefaultRoute:
     Type: AWS::ApiGatewayV2::Route
@@ -196,7 +196,7 @@ Resources:
       PackageType: Image
       Role: !GetAtt RailsLambdaRole.Arn
       ImageConfig:
-        Command: ["config/environment.LambdaCable.disconnect"]
+        Command: ["config/environment.LambdaCable.cmd"]
 
   WSDisconnectRoute:
     Type: AWS::ApiGatewayV2::Route

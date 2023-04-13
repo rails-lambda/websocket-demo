@@ -22,18 +22,9 @@ module LambdaCable
 
   autoload :Client
   autoload :Handler
+  autoload :Connection
 
-  def connect(event:, context:)
-    Handler.connect(event: event, context: context)
+  def self.cmd(event:, context:)
+    Handler.cmd(event: event, context: context)
   end
-
-  def default(event:, context:)
-    Handler.default(event: event, context: context)
-  end
-
-  def disconnect(event:, context:)
-    Handler.disconnect(event: event, context: context)
-  end
-
-  extend self
 end
