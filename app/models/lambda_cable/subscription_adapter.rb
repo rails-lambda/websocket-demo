@@ -1,5 +1,7 @@
+require "action_cable/subscription_adapter/inline"
+
 module LambdaCable
-  class SubscriptionAdapter < ActionCable::SubscriptionAdapter::Base
+  class SubscriptionAdapter < ActionCable::SubscriptionAdapter::Inline
     prepend ActionCable::SubscriptionAdapter::ChannelPrefix
     
     # attr_reader :logger, :server

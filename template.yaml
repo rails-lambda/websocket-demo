@@ -23,6 +23,8 @@ Globals:
       Variables:
         RAILS_ENV: !Ref RailsEnv
         DATABASE_URL: x-crypteia-ssm:/lamby-ws/env/DATABASE_URL
+        LAMBDA_CABLE_CONNECTIONS_TABLE: !Ref WSConnectionsTable
+        LAMBDA_CABLE_SUBSCRIPTIONS_TABLE: !Ref WSSubscriptionsTable
     Timeout: 30
 
 Resources:
@@ -45,31 +47,47 @@ Resources:
             Resource:
               - !Sub arn:aws:ssm:*:${AWS::AccountId}:parameter/lamby-ws/env/*
 
-  WSTable:
+  WSConnectionsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       KeySchema:
-      - AttributeName: scopeID
-        KeyType: HASH
-      - AttributeName: dataID
-        KeyType: RANGE
+        - AttributeName: connection_id
+          KeyType: HASH
       AttributeDefinitions:
-      - AttributeName: scopeID
-        AttributeType: S
-      - AttributeName: dataID
-        AttributeType: S
+        - AttributeName: connection_id
+          AttributeType: S
       BillingMode: PAY_PER_REQUEST
       TimeToLiveSpecification:
         AttributeName: ttl
         Enabled: true
 
-  WSTableConnection:
+  WSSubscriptionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: connection_id
+          KeyType: HASH
+        - AttributeName: channel_name
+          KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: connection_id
+          AttributeType: S
+        - AttributeName: channel_name
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+  WSTableConnections:
     Type: AWS::Serverless::Connector
     Properties:
       Source: { Id: RailsLambda }
-      Destination: { Id: WSTable }
+      Destination:
+        - Id: WSConnectionsTable
+        - Id: WSSubscriptionsTable
       Permissions: [Read, Write]
-
+  
   WSApi:
     Type: AWS::ApiGatewayV2::Api
     Properties:

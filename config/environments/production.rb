@@ -106,4 +106,11 @@ Rails.application.configure do
   # config.lograge.custom_payload do |controller|
   #   { requestid: controller.request.request_id }
   # end
+  config.action_cable.worker_pool_size = 1
+  config.action_cable.disable_request_forgery_protection = true
+  config.action_cable.allowed_request_origins = [
+    /execute-api.us-east-1.amazonaws.com/,
+    'https://lamby-ws.custominktech.com'
+  ]
+  config.middleware.use Rack::Events, [ LambdaCable::RackEvents.new ]
 end

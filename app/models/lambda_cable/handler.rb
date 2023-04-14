@@ -1,62 +1,40 @@
 module LambdaCable
-  module Handler
-    extend self
+  class Handler
+    include LambdaCable::RackEnvConcerns
 
-    def cmd(event:, context:)
-      puts "[DEBUG] LambdaCable::Handler#cmd"
+    def self.cmd(event:, context:)
+      new(event, context).handle
+    end
+
+    def initialize(event, context)
+      puts "[DEBUG] LambdaCable::Handler#initialize"
       puts(event.to_json)
       puts(context.to_json)
-      case event['requestContext']['routeKey']
-      when '$default'
-        default event: event, context: context
-      when '$connect'
-        connect event: event, context: context
-      when '$disconnect'
-        disconnect event: event, context: context
-      end
+      @event, @context = event, context
+    end
+
+    def handle
+      send(route_key)
+    end
+
+    def connect
+      lamby_cable_request
+    end
+
+    def default
+      return { statusCode: 200 }
+    end
+
+    def disconnect
+      return { statusCode: 200 }
     end
 
     private
 
-    def connect(event:, context:)
-      response = action_cable_server event, context
-      puts "[DEBUG] response: #{response.inspect}"
-      response
-      # { statusCode: 200 };
-    end
+    attr_reader :event, :context
 
-    def default(event:, context:)
-      # response = CLIENT.post_to_connection({
-      #   data: event.body,
-      #   connection_id: event.requestContext.connectionId
-      # })
-      return { statusCode: 200, body: '{"default":"true"}' }
-    end
-
-    def disconnect(event:, context:)
-      return { statusCode: 200, body: '{"disconnect":"true"}' }
-    end
-
-    # def action_cable_server(event, context)
-    #   event = event_with_action_cable_path(event)
-    #   klass = Lamby::Rack.lookup nil, event
-    #   env = klass.new(event, context).env
-    #   ActionCable.server.call(env)
-    # end
-
-    def action_cable_server(event, context)
-      event = event_with_action_cable_path(event)
-      Lamby.cmd event: event, context: context
-    end
-
-    def event_with_action_cable_path(event)
-      event.dup.tap do |event|
-        event['path'] ||= '/cable'
-        event['httpMethod'] ||= 'GET'
-        event['requestContext'].merge!({
-          "resourcePath": "/cable"
-        })
-      end
+    def lamby_cable_request
+      Lamby.cmd event: event_to_cable, context: context
     end
   end
 end

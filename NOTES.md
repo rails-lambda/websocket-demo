@@ -1,3 +1,7 @@
+## Guide Notes
+
+[ ] Add lambda_cable gem to your production group.
+
 ## Questions/Followups
 
 [ ] We we really need unique `DockerTag` properties? Maybe we can remove that?
@@ -7,12 +11,10 @@
 [ ] Do we need `channel_prefix` in any way? DynamoDB optimization maybe?
 [ ] Where does `Sec-WebSocket-Protocol: actioncable-v1-json` come in?
 [ ] Will this work? `ActionCable.server.remote_connections.where(current_user: User.find(1)).disconnect`
-
-## Implementation Notes
-
-Configuration:
-- Should `connection_class` be custom vs. `ActionCable::Connection::Base`?
-- Should we set `worker_pool_size` from default 4 to something else?
+[ ] Make standalone API Gateway URLs work besides assuming /cable.
+[ ] How will [PeriodicTimers](https://api.rubyonrails.org/v6.1.3/classes/ActionCable/Channel/PeriodicTimers/ClassMethods.html) work? Likely EventBridge schedules.
+[x] Should `connection_class` be custom vs. `ActionCable::Connection::Base`?
+[ ] Should we set `worker_pool_size` from default 4 to something else?
 
 Connection & Channel:
 - app/channels/application_cable/connection.rb
