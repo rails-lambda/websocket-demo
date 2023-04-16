@@ -5,7 +5,7 @@ require "rails/all"
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
-require_relative '../app/models/lambda_cable'
+require 'lambda_cable' if Rails.env.production?
 
 module LambyW
   class Application < Rails::Application
