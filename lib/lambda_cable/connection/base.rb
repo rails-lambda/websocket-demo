@@ -7,7 +7,6 @@ module LambdaCable
       end
 
       def send_async(method, *arguments)
-        # LambdaCable::RackEvents.on_finish { send method, *arguments }
         LambdaPunch.push { send method, *arguments }
       end
 

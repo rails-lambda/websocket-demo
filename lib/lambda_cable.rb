@@ -19,7 +19,6 @@ module LambdaCable
 
   autoload :Handler
   autoload :RackEnvConcerns
-  autoload :RackEvents
   autoload :SubscriptionAdapter
 
   def self.cmd(event:, context:)

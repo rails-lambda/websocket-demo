@@ -16,7 +16,6 @@ module LambdaCable
 
       def alive?
         resp = client.get_connection connection_id: connection_id
-        puts "[DEBUG] LambdaCable::Connection::WebSocket#alive? resp: #{resp.inspect}"
         resp.status_code == 200
       rescue Aws::ApiGatewayManagementApi::Errors::GoneException,
              Aws::ApiGatewayManagementApi::Errors::Http410Error
@@ -43,7 +42,7 @@ module LambdaCable
 
       def rack_response
         open
-        [ 200, {}, [] ]
+        [ 200, rack_response_headers, [] ]
       end
 
       private
@@ -60,6 +59,13 @@ module LambdaCable
           region: ENV['AWS_REGION'], 
           endpoint: apigw_endpoint
         )
+      end
+
+      def rack_response_headers
+        protocols = lambda_event.dig 'headers', 'Sec-WebSocket-Protocol'
+        return {} unless protocols
+        protocol = protocols.split(',').first { |p| ActionCable::INTERNAL[:protocols].include? p }
+        protocol ? { 'Sec-WebSocket-Protocol' => protocol } : {}
       end
     end
   end

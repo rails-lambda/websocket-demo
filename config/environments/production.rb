@@ -113,7 +113,6 @@ Rails.application.configure do
     /execute-api.us-east-1.amazonaws.com/,
     'https://lamby-ws.custominktech.com'
   ]
-  config.middleware.use Rack::Events, [ LambdaCable::RackEvents.new ]
   config.to_prepare { LambdaPunch.start_server! }
   config.lamby.handled_proc = Proc.new do |_event, context|
     LambdaPunch.handled!(context)
