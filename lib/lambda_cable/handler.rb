@@ -18,7 +18,7 @@ module LambdaCable
     end
 
     def connect
-      lamby_cable_request
+      Lamby.cmd event: event_to_cable, context: context
     end
 
     def default
@@ -30,11 +30,6 @@ module LambdaCable
     end
 
     private
-
     attr_reader :event, :context
-
-    def lamby_cable_request
-      Lamby.cmd event: event_to_cable, context: context
-    end
   end
 end

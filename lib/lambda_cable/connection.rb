@@ -9,3 +9,5 @@ module LambdaCable
     end
   end
 end
+
+ActionCable::Connection::Base.prepend LambdaCable::Connection::Base

@@ -9,7 +9,8 @@
 require 'lamby'
 require 'base64'
 require 'action_cable'
-require_relative 'lambda_cable/version'
+require 'lambda_cable/version'
+require 'lambda_cable/connection'
 
 ActionCable::Server::Base.config.worker_pool_size = 1
 
@@ -18,8 +19,8 @@ module LambdaCable
 
   autoload :Handler
   autoload :RackEnvConcerns
-  autoload :Connection
   autoload :RackEvents
+  autoload :SubscriptionAdapter
 
   def self.cmd(event:, context:)
     Handler.cmd(event: event, context: context)

@@ -1,1 +1,1 @@
-require 'lambda_cable/subscription_adapter'
+ActionCable::SubscriptionAdapter::LambdaCable = LambdaCable::SubscriptionAdapter

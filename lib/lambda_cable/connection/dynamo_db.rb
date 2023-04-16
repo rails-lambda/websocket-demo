@@ -33,7 +33,7 @@ module LambdaCable
         { connection_id: connection_id,
           updated_at: Time.current.to_s(:db),
           apigw_endpoint: apigw_endpoint,
-          ttl: Time.current.advance(seconds: 300).to_i,
+          ttl: Time.current.advance(seconds: 60).to_i,
         }.tap do |md|
           md[:started_at] = Time.current.to_s(:db) if route_key.connect?
         end

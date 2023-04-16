@@ -30,7 +30,7 @@ module LambdaCable
 end
 
 # Move out of production.rb and application.rb
-# require_relative '../app/models/lambda_cable/rack_events'
+# require_relative 'lambda_cable'
 # config.middleware.use Rack::Events, [ LambdaCable::RackEvents.new ]
 
 # Move into some Railtie:

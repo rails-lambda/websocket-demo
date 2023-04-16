@@ -37,4 +37,5 @@ end
 
 group :production do
   gem 'lograge'
+  gem 'lambda_punch'
 end

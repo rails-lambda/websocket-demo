@@ -7,6 +7,10 @@ COPY --from=ghcr.io/customink/crypteia-extension-debian:1.1.0 /opt /opt
 ENTRYPOINT [ "/usr/local/bundle/bin/aws_lambda_ric" ]
 ENV LD_PRELOAD=/opt/lib/libcrypteia.so
 
+# Install LambdaPunch.
+RUN gem install lambda_punch && lambda_punch install
+ENV LAMBDA_TASK_ROOT=/app
+
 # Create a secure user for prod and app directory.
 RUN mkdir /app \
     && groupadd -g 10001 app \

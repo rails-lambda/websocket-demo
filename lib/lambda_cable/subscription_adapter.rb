@@ -1,4 +1,4 @@
-require "action_cable/subscription_adapter/inline"
+require 'action_cable/subscription_adapter/inline'
 
 module LambdaCable
   class SubscriptionAdapter < ActionCable::SubscriptionAdapter::Inline
@@ -33,5 +33,3 @@ module LambdaCable
     # end
   end
 end
-
-ActionCable::SubscriptionAdapter::LambdaCable = LambdaCable::SubscriptionAdapter

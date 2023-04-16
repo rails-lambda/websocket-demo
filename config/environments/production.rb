@@ -106,6 +106,7 @@ Rails.application.configure do
   # config.lograge.custom_payload do |controller|
   #   { requestid: controller.request.request_id }
   # end
+  require 'lambda_cable'
   config.action_cable.worker_pool_size = 1
   config.action_cable.disable_request_forgery_protection = true
   config.action_cable.allowed_request_origins = [
@@ -113,4 +114,8 @@ Rails.application.configure do
     'https://lamby-ws.custominktech.com'
   ]
   config.middleware.use Rack::Events, [ LambdaCable::RackEvents.new ]
+  config.to_prepare { LambdaPunch.start_server! }
+  config.lamby.handled_proc = Proc.new do |_event, context|
+    LambdaPunch.handled!(context)
+  end
 end

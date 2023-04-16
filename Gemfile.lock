@@ -108,6 +108,7 @@ GEM
     erubi (1.12.0)
     faker (3.1.1)
       i18n (>= 1.8.11, < 2)
+    ffi (1.15.5)
     globalid (1.1.0)
       activesupport (>= 5.0)
     i18n (1.12.0)
@@ -122,6 +123,11 @@ GEM
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
     jmespath (1.6.2)
+    lambda_punch (1.1.1)
+      concurrent-ruby
+      rake
+      rb-inotify
+      timeout
     lamby (4.0.2)
       rack
     lograge (0.12.0)
@@ -194,6 +200,8 @@ GEM
       thor (~> 1.0)
       zeitwerk (~> 2.5)
     rake (13.0.6)
+    rb-inotify (0.10.1)
+      ffi (~> 1.0)
     redis (5.0.6)
       redis-client (>= 0.9.0)
     redis-client (0.14.0)
@@ -256,6 +264,7 @@ DEPENDENCIES
   faker
   importmap-rails
   jbuilder
+  lambda_punch
   lamby
   lograge
   mysql2 (~> 0.5)
