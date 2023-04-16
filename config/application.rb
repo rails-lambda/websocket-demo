@@ -5,9 +5,8 @@ require "rails/all"
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
-require 'lambda_cable' if Rails.env.production?
 
-module LambyW
+module LambyWs
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
@@ -25,3 +24,5 @@ module LambyW
     config.session_store :cookie_store, expire_after: 1.day, key: '_session'
   end
 end
+
+require 'lambda_cable' if Rails.env.production?
