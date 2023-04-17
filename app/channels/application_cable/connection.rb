@@ -2,12 +2,10 @@ module ApplicationCable
   class Connection < ActionCable::Connection::Base
     identified_by :current_user
 
-    # def connect
-    #   puts "[DEBUG] ApplicationCable::Connection#connect"
-    #   puts session_user
-    #   reject_unauthorized_connection unless session_user
-    #   self.current_user = session_user
-    # end
+    def connect
+      reject_unauthorized_connection unless session_user
+      self.current_user = session_user
+    end
 
     private
 
