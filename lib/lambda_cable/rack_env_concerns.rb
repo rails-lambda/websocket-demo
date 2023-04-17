@@ -1,4 +1,8 @@
 module LambdaCable
+  # This module allows various classes to access the Lambda event and context. Some classes use
+  # the Rack environment `env` which relies on Lamby's assignment of the Lambda event and context 
+  # into the Rack environment. Other classes use the Lambda `event` and `context` directly.
+  # 
   module RackEnvConcerns
     extend ActiveSupport::Concern
     
