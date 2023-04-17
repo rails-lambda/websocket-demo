@@ -1,18 +1,19 @@
 
 ## Questions/Followups
 
-[ ] We we really need unique `DockerTag` properties? Maybe we can remove that?
-[ ] Within the `WSPolicy` call out how this needs the `RailsLambda` name and `RailsLambdaRole`.
-[ ] If you make your own Role, use that name instead!
-[ ] Does any of the ActionCable uses ActiveJob for background processing?
-[ ] Do we need `channel_prefix` in any way? DynamoDB optimization maybe?
-[ ] Where does `Sec-WebSocket-Protocol: actioncable-v1-json` come in?
-[ ] Will this work? `ActionCable.server.remote_connections.where(current_user: User.find(1)).disconnect`
-[ ] Make standalone API Gateway URLs work besides assuming /cable.
-[ ] How will [PeriodicTimers](https://api.rubyonrails.org/v6.1.3/classes/ActionCable/Channel/PeriodicTimers/ClassMethods.html) work? Likely EventBridge schedules.
-[x] Should `connection_class` be custom vs. `ActionCable::Connection::Base`?
-[ ] Should we set `worker_pool_size` from default 4 to something else?
-[ ] Create gem. Dev & Runtime Deps.
+- [ ] Set SECRET_KEY_BASE in SSM.
+- [ ] We we really need unique `DockerTag` properties? Maybe we can remove that?
+- [ ] Within the `WSPolicy` call out how this needs the `RailsLambda` name and `RailsLambdaRole`.
+- [ ] If you make your own Role, use that name instead!
+- [ ] Does any of the ActionCable uses ActiveJob for background processing?
+- [ ] Do we need `channel_prefix` in any way? DynamoDB optimization maybe?
+- [ ] Where does `Sec-WebSocket-Protocol: actioncable-v1-json` come in?
+- [ ] Will this work? `ActionCable.server.remote_connections.where(current_user: User.find(1)).disconnect`
+- [ ] Make standalone API Gateway URLs work besides assuming /cable.
+- [ ] How will [PeriodicTimers](https://api.rubyonrails.org/v6.1.3/classes/ActionCable/Channel/PeriodicTimers/ClassMethods.html) work? Likely EventBridge schedules.
+- [x] Should `connection_class` be custom vs. `ActionCable::Connection::Base`?
+- [ ] Should we set `worker_pool_size` from default 4 to something else?
+- [ ] Create gem. Dev & Runtime Deps.
 
 ## Next Up?
 
