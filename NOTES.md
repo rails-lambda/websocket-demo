@@ -1,6 +1,3 @@
-## Guide Notes
-
-[ ] Add lambda_cable gem to your production group.
 
 ## Questions/Followups
 
@@ -15,15 +12,16 @@
 [ ] How will [PeriodicTimers](https://api.rubyonrails.org/v6.1.3/classes/ActionCable/Channel/PeriodicTimers/ClassMethods.html) work? Likely EventBridge schedules.
 [x] Should `connection_class` be custom vs. `ActionCable::Connection::Base`?
 [ ] Should we set `worker_pool_size` from default 4 to something else?
+[ ] Create gem. Dev & Runtime Deps.
 
-Connection & Channel:
-- app/channels/application_cable/connection.rb
-- class Connection < ActionCable::Connection::Base
-- app/channels/application_cable/channel.rb
-- class Channel < ActionCable::Channel::Base
+## Next Up?
 
-SubscriptionAdapter:
-- Should we also prepend ChannelPrefix? YES!
+- Subscriptions?
+- Channels?
+
+```json
+{"command":"subscribe","identifier":"{\"channel\":\"Turbo::StreamsChannel\",\"signed_stream_name\":\"IloybGtPaTh2YkdGdFlua3RkM012VW05dmJTOHgi--38562feb9cd334e9de85098412c02e4693fc606663ce97cd6a56c7e3162821a1\"}"}
+```
 
 ## Installs
 
@@ -62,13 +60,6 @@ end
 * Add `redis` to `development` group and service to the devcontainer.
 * Change cable.yml to redis v. async adapter.
 
-## Basic LambdaCable
-
-```ruby
-gem "aws-sdk-apigatewaymanagementapi"
-gem "aws-sdk-dynamodb"
-```
-
 ## Configure Host
 
 * TODO: Refactor to ENV vars?
@@ -87,7 +78,21 @@ Maybe needed. I did have to add this to the application.rb for easy session name
 config.session_store :cookie_store, expire_after: 1.day, key: '_session'
 ```
 
-## Adding CloudFront Origin
+
+
+
+
+
+
+
+
+## Guide Notes
+
+[ ] Add lambda_cable gem to your production group.
+[ ] Install LambdaPunch
+[ ] Adding CloudFront Distribution
+
+### Adding CloudFront Distribution
 
 You will need the the API Gateway's Physical ID that was created in your CloudFormation stack. You can navigate to that stack, click the "Resources" tab and find the `WSApi` Logical ID matching the name in your `template.yaml` file. The Physical ID should look something like `3iku9itbbb`. This along with the AWS Region where you stack is deployed will be used for the origin domain.
 
@@ -129,40 +134,3 @@ From CloudFront main screen:
   - Sec-WebSocket-Extensions
 - Query strings: None
 - Cookies: All
-
-## Getting /cable in $connect?
-
-Can `RouteKey` be something like this? 
-
-https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-route.html#cfn-apigatewayv2-route-authorizationtype
-
-```yaml
-RouteKey: "cable/$connect"
-```
-
-Add this to the event?
-
-```json
-{
-  "resource": "/cable",
-  "path": "/cable",
-  "httpMethod": "GET",
-  "requestContext": {
-    "resourcePath": "/cable",
-  }
-}
-```
-
-## Do I Need An Integration Response?
-
-...
-
-```bash
-aws apigatewaymanagementapi post-to-connection \
-  --endpoint-url "https://3iku9itbbb.execute-api.us-east-1.amazonaws.com/cable" \
-  --connection-id "DSc1wfYNoAMCKxg=" \
-  --data 'eyJ0eXBlIjoid2VsY29tZSJ9'
-
-wscat -c wss://3iku9itbbb.execute-api.us-east-1.amazonaws.com/cable
-wscat -c wss://lamby-ws.custominktech.com/cable
-```

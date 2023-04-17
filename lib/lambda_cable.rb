@@ -1,8 +1,5 @@
-# s.add_dependency "actioncable", ">= 6.0.0"
-# s.add_dependency "rails", ">= 6.0.0"
 # s.add_dependency "activesupport"
-# s.add_dependency "actionpack"
-# s.add_dependency "concurrent-ruby"
+# s.add_dependency "actioncable", ">= 6.0.0"
 # s.add_dependency "aws-sdk-apigatewaymanagementapi"
 # s.add_dependency "aws-sdk-dynamodb"
 
