@@ -16,8 +16,10 @@
 
 ## Next Up?
 
-- Subscriptions?
-- Channels?
+- Connection
+  - Unwind `subscribe_to_internal_channel`.
+- Subscriptions
+- Channels
 
 ```json
 {"command":"subscribe","identifier":"{\"channel\":\"Turbo::StreamsChannel\",\"signed_stream_name\":\"IloybGtPaTh2YkdGdFlua3RkM012VW05dmJTOHgi--38562feb9cd334e9de85098412c02e4693fc606663ce97cd6a56c7e3162821a1\"}"}
@@ -134,3 +136,13 @@ From CloudFront main screen:
   - Sec-WebSocket-Extensions
 - Query strings: None
 - Cookies: All
+
+Add something about these configs.
+
+```ruby
+config.action_cable.disable_request_forgery_protection = true
+config.action_cable.allowed_request_origins = [
+  /execute-api.us-east-1.amazonaws.com/,
+  'https://lamby-ws.custominktech.com'
+]
+```

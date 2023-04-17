@@ -22,11 +22,11 @@ module LambdaCable
     end
 
     def default
-      return { statusCode: 200 }
+      { statusCode: 200, headers: {}, body: '' }
     end
 
     def disconnect
-      return { statusCode: 200 }
+      { statusCode: 200, headers: {}, body: '' }
     end
 
     private

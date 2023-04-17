@@ -108,11 +108,7 @@ Rails.application.configure do
   # end
   require 'lambda_cable'
   config.action_cable.worker_pool_size = 1
-  config.action_cable.disable_request_forgery_protection = true
-  config.action_cable.allowed_request_origins = [
-    /execute-api.us-east-1.amazonaws.com/,
-    'https://lamby-ws.custominktech.com'
-  ]
+  config.action_cable.allowed_request_origins = ['https://lamby-ws.custominktech.com']
   config.to_prepare { LambdaPunch.start_server! }
   config.lamby.handled_proc = Proc.new do |_event, context|
     LambdaPunch.handled!(context)
