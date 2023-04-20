@@ -1,6 +1,6 @@
 module LambdaCable
   module Connection
-    module MessageBuffer
+    class MessageBuffer
       def initialize(connection)
         @connection = connection
       end

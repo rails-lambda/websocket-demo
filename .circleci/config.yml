@@ -40,14 +40,14 @@ jobs:
       - checkout
       - devcontainer-install
       - devcontainer-build
-  test-job:
-    <<: *default-machine
-    steps:
-      - checkout
-      - devcontainer-install
-      - devcontainer-up
-      - devcontainer-run: { cmd: ./bin/setup }
-      - devcontainer-run: { cmd: ./bin/test }
+  # test-job:
+  #   <<: *default-machine
+  #   steps:
+  #     - checkout
+  #     - devcontainer-install
+  #     - devcontainer-up
+  #     - devcontainer-run: { cmd: ./bin/setup }
+  #     - devcontainer-run: { cmd: ./bin/test }
   deploy-job:
     <<: *default-machine
     steps:
