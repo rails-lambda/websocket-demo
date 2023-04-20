@@ -14,13 +14,20 @@
 - [x] Should `connection_class` be custom vs. `ActionCable::Connection::Base`?
 - [ ] Should we set `worker_pool_size` from default 4 to something else?
 - [ ] Create gem. Dev & Runtime Deps.
+- [ ] How does a "server" subscribe to an internal channel so it can disconnect folks?
 
 ## Next Up?
 
-- Connection
-  - Unwind `subscribe_to_internal_channel`.
-- Subscriptions
-- Channels
+- [ ] Connection
+  - [x] Unwind `subscribe_to_internal_channel`.
+- [ ] Server
+  - [ ] #event_loop<StreamEventLoop>
+    - [ ] #timer, #post, #attach, #detach, #writes_pending, #stop
+  - [ ] Connections (heartbeat)
+- [ ] Subscriptions
+- [ ] Channels
+- [ ] PeriodicTimers (maybe use cloudwatch)
+- [ ] Are pings client side or server side? If server, ignore due to no timeouts?
 
 ```json
 {"command":"subscribe","identifier":"{\"channel\":\"Turbo::StreamsChannel\",\"signed_stream_name\":\"IloybGtPaTh2YkdGdFlua3RkM012VW05dmJTOHgi--38562feb9cd334e9de85098412c02e4693fc606663ce97cd6a56c7e3162821a1\"}"}
@@ -81,6 +88,21 @@ Maybe needed. I did have to add this to the application.rb for easy session name
 config.session_store :cookie_store, expire_after: 1.day, key: '_session'
 ```
 
+## Testing Connection Timeout
+
+```shell
+wscat --connect wss://lamby-ws.custominktech.com/cable \
+      --origin https://lamby-ws.custominktech.com
+
+aws apigatewaymanagementapi get-connection \
+    --endpoint-url "https://3iku9itbbb.execute-api.us-east-1.amazonaws.com/cable" \
+    --connection-id "DiszOeQQoAMCEsw="
+
+aws apigatewaymanagementapi post-to-connection \
+  --endpoint-url "https://3iku9itbbb.execute-api.us-east-1.amazonaws.com/cable" \
+  --connection-id "DiszOeQQoAMCEsw=" \
+  --data "eyJ0eXBlIjoid2VsY29tZSJ9"
+```
 
 
 
@@ -94,6 +116,20 @@ config.session_store :cookie_store, expire_after: 1.day, key: '_session'
 [ ] Add lambda_cable gem to your production group.
 [ ] Install LambdaPunch
 [ ] Adding CloudFront Distribution
+
+### Architecture Reports
+
+What does Serverless Event-Driven WebSockets even mean?
+
+- There is no internal "server" channel to send server-side messages to each "running" server. For example, say you want to disconnect a User for some reason. For a K8s pod, they would all be subscribed to an internal channel so they can talk to each other. In this situation, the servers hold state. However, for Lambda, API Gateway holds our state. So there is no need for an internal channel. Instead we send the disconnect message to API Gateway. 
+
+No server side state! Connection#event_loop which is based on the Server#event_loop work is not handled by LambdaPunch after the request/response loop is finished. So just like the ActionCable servers where the main thread is not blocked, we do work in the background. But no long term state is maintained after the request is finished. We also tell ActionCable to use a worker_pool size of 1 since there is no need for this cleverness.
+
+- No need for server restarts or shutdowns events.
+- Worker pools are always empty after each request thanks to LambdaPunch.
+- No such thing as asking an individual server for its statistics. It holds nothing.
+- No WebSocket message callbacks, simply just wait for an invoke event.
+
 
 ### Adding CloudFront Distribution
 

@@ -7,7 +7,7 @@ module LambdaCable
 
       def initialize(env, event_target)
         @env, @event_target = env, event_target
-        @dynamodb = LambdaCable::Connection::DynamoDb.new(env)
+        @dynamodb = LambdaCable::Server::ConnectionsDb.new(env)
       end
 
       def possible?

@@ -4,12 +4,9 @@ module LambdaCable
   class SubscriptionAdapter < ActionCable::SubscriptionAdapter::Inline
     prepend ActionCable::SubscriptionAdapter::ChannelPrefix
     
-    # attr_reader :logger, :server
     def initialize(server)
       super
       puts "[DEBUG] SubscriptionAdapter#initialize"
-      # @server = server
-      # @logger = @server.logger
     end
 
     def broadcast(channel, payload)
@@ -27,9 +24,5 @@ module LambdaCable
     def shutdown
       puts "[DEBUG] SubscriptionAdapter#shutdown"
     end
-
-    # def identifier
-    #   @server.config.cable[:id] ||= "ActionCable-PID-#{$$}"
-    # end
   end
 end

@@ -1,8 +1,8 @@
 require 'aws-sdk-dynamodb'
 
 module LambdaCable
-  module Connection
-    class DynamoDb
+  module Server
+    class ConnectionsDb
       include LambdaCable::RackEnvConcerns
 
       def initialize(env)

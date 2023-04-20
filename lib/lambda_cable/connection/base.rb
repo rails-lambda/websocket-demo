@@ -4,14 +4,11 @@ module LambdaCable
       def initialize(server, env, coder: ActiveSupport::JSON)
         super
         @websocket = LambdaCable::Connection::WebSocket.new(env, self)
+        @message_buffer = LambdaCable::Connection::MessageBuffer.new(self)
       end
 
       def send_async(method, *arguments)
         LambdaPunch.push { send method, *arguments }
-      end
-
-      # TEMP: Just getting connect to work.
-      def subscribe_to_internal_channel
       end
     end
   end

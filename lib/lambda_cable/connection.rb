@@ -4,8 +4,9 @@ module LambdaCable
 
     eager_autoload do
       autoload :Base
+      autoload :MessageBuffer
+      autoload :StreamEventLoop
       autoload :WebSocket
-      autoload :DynamoDb
     end
   end
 end
