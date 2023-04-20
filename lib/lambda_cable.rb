@@ -7,7 +7,9 @@ require 'lamby'
 require 'base64'
 require 'action_cable'
 require 'lambda_cable/version'
+# Force freedom patching with Module.prepend.
 require 'lambda_cable/connection'
+require 'lambda_cable/server'
 
 ActionCable::Server::Base.config.worker_pool_size = 1
 

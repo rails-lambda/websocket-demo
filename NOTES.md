@@ -26,7 +26,7 @@
   - [ ] Connections (heartbeat)
 - [ ] Subscriptions
 - [ ] Channels
-- [ ] PeriodicTimers (maybe use cloudwatch)
+- [ ] PeriodicTimers (maybe use CloudWatch)
 - [ ] Are pings client side or server side? If server, ignore due to no timeouts?
 
 ```json

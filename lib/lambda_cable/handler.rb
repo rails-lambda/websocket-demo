@@ -22,7 +22,7 @@ module LambdaCable
     end
 
     def default
-      { statusCode: 200, headers: {}, body: '' }
+      Lamby.cmd event: event_to_cable, context: context
     end
 
     def disconnect
