@@ -23,6 +23,7 @@ module LambdaCable
       end
 
       def transmit(data)
+        puts "[DEBUG] LambdaCable::Connection::WebSocket#transmit: #{data.inspect}"
         client.post_to_connection data: data, connection_id: connection_id
       rescue Aws::ApiGatewayManagementApi::Errors::GoneException,
              Aws::ApiGatewayManagementApi::Errors::Http410Error => e
@@ -30,6 +31,7 @@ module LambdaCable
       end
 
       def close
+        puts "[DEBUG] LambdaCable::Connection::WebSocket#close"
         dynamodb.close
         client.delete_connection connection_id: connection_id
       rescue Aws::ApiGatewayManagementApi::Errors::GoneException,

@@ -6,7 +6,7 @@ module LambdaCable
       end
 
       def add_connection(connection)
-        puts "[DEBUG] LambdaCable::Server::Connections#add_connection: #{connection.inspect}"
+        puts "[DEBUG][NOP] LambdaCable::Server::Connections#add_connection"
         []
       end
 
@@ -15,11 +15,11 @@ module LambdaCable
       end
 
       def setup_heartbeat_timer
-        puts "[DEBUG] LambdaCable::Server::Connections#setup_heartbeat_timer"
+        puts "[DEBUG][NOP] LambdaCable::Server::Connections#setup_heartbeat_timer"
       end
 
       def open_connections_statistics
-        puts "[DEBUG] LambdaCable::Server::Connections#open_connections_statistics"
+        puts "[DEBUG][NOP] LambdaCable::Server::Connections#open_connections_statistics"
       end
     end
   end
