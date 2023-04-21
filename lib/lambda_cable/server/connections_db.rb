@@ -40,7 +40,8 @@ module LambdaCable
       end
 
       def message
-        connection.dispatch_websocket_message lambda_event['body']
+        res = connection.dispatch_websocket_message lambda_event['body']
+        LambdaCable.logger.debug "[DEBUG] LambdaCable::Server::ConnectionsDb#message res: #{res.inspect}"
         LambdaPunch.push { update }
       end
 
@@ -54,17 +55,24 @@ module LambdaCable
 
       def item
         { connection_id: connection_id,
-          updated_at: Time.current.to_fs(:db),
+          updated_at: current_time_value,
           apigw_endpoint: apigw_endpoint,
           connect_env: lambda_event_connect_properties,
-          started_at: Time.current.to_fs(:db),
-          ttl: Time.current.advance(seconds: 60).to_i }
+          started_at: current_time_value,
+          ttl: ttl_value }
+      end
+
+      def item_update_values
+        { ":updated_at" => current_time_value,
+          ":apigw_endpoint" => apigw_endpoint,
+          ":ttl" => ttl_value }
       end
 
       def update
         client.update_item table_name: table_name, key: { connection_id: connection_id }, 
-          update_expression: "SET updated_at = :updated_at, apigw_endpoint = :apigw_endpoint, ttl = :ttl",
-          expression_attribute_values: item.slice(:updated_at, :apigw_endpoint, :ttl).transform_keys { |k| k.inspect }
+          update_expression: "SET updated_at = :updated_at, apigw_endpoint = :apigw_endpoint, #ttl_attribute = :ttl",
+          expression_attribute_values: item_update_values,
+          expression_attribute_names: { "#ttl_attribute" => "ttl" }
       end
 
       # This creates a new ActionCable connection object for each $default request since 
@@ -87,6 +95,14 @@ module LambdaCable
           connection_class = ActionCable.server.config.connection_class.call
           connection_class.new ActionCable.server, lambda_rack_env
         end
+      end
+
+      def ttl_value
+        Time.current.advance(seconds: 60).to_i
+      end
+
+      def current_time_value
+        Time.current.to_fs(:db)
       end
 
       delegate :client, :table_name, to: :class

@@ -26,6 +26,7 @@ module LambdaCable
 
       def alive?
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#alive? connection_id: #{connection_id}"
+        return true
         resp = client.get_connection connection_id: connection_id
         resp.status_code == 200
       rescue Aws::ApiGatewayManagementApi::Errors::GoneException,
