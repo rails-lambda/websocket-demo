@@ -5,6 +5,7 @@
 
 require 'lamby'
 require 'base64'
+require 'logger'
 require 'action_cable'
 require 'lambda_cable/version'
 # Force freedom patching with Module.prepend.
@@ -17,10 +18,15 @@ module LambdaCable
   extend ActiveSupport::Autoload
 
   autoload :Handler
+  autoload :Logger
   autoload :RackEnvConcerns
   autoload :SubscriptionAdapter
 
   def self.cmd(event:, context:)
     Handler.cmd(event: event, context: context)
+  end
+
+  def self.logger
+    @logger ||= LambdaCable::Logger.new.logger
   end
 end

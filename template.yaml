@@ -25,7 +25,7 @@ Globals:
         DATABASE_URL: x-crypteia-ssm:/lamby-ws/env/DATABASE_URL
         LAMBDA_CABLE_CONNECTIONS_TABLE: !Ref WSConnectionsTable
         LAMBDA_CABLE_SUBSCRIPTIONS_TABLE: !Ref WSSubscriptionsTable
-        LAMBDA_PUNCH_LOG_LEVEL: debug
+        LAMBDA_CABLE_LOG_LEVEL: debug
     Timeout: 30
 
 Resources:

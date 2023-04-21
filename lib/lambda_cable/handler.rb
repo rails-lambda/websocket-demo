@@ -7,9 +7,7 @@ module LambdaCable
     end
 
     def initialize(event, context)
-      puts "[DEBUG] LambdaCable::Handler#initialize"
-      puts(event.to_json)
-      puts(context.to_json)
+      LambdaCable.logger.debug "[DEBUG] LambdaCable::Handler#initialize"
       @event, @context = event, context
     end
 
@@ -17,7 +15,7 @@ module LambdaCable
       send(route_key)
     ensure
       LambdaPunch.handled!(context)
-      puts "[DEBUG] LambdaPunch.handled!"
+      LambdaCable.logger.debug "[DEBUG] LambdaPunch.handled!"
     end
 
     def connect
