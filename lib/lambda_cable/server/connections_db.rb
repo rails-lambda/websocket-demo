@@ -5,16 +5,43 @@ module LambdaCable
     class ConnectionsDb
       include LambdaCable::RackEnvConcerns
 
-      def initialize(env)
-        @env = env
+      class << self
+
+        def connection(event, context)
+          connection_id = event.dig 'requestContext', 'connectionId'
+          db_item = item(connection_id)
+          return unless db_item
+          new event.dup.merge!(db_item['connect_env']), context
+        end
+
+        def item(connection_id)
+          resp = client.get_item table_name: table_name, key: { connection_id: connection_id }
+          resp.item
+        rescue Aws::DynamoDB::Errors::ResourceNotFoundException
+          nil
+        end
+
+        def client
+          @client ||= Aws::DynamoDB::Client.new region: ENV['AWS_REGION']
+        end
+
+        def table_name
+          ENV['LAMBDA_CABLE_CONNECTIONS_TABLE']
+        end
+
       end
 
-      def table_name
-        ENV['LAMBDA_CABLE_CONNECTIONS_TABLE']
+      def initialize(event, context)
+        @event, @context = event, context
       end
 
       def open
-        put_connection
+        client.put_item table_name: table_name, item: item
+      end
+
+      def message
+        connection.dispatch_websocket_message lambda_event['body']
+        LambdaPunch.push { update }
       end
 
       def close
@@ -22,26 +49,47 @@ module LambdaCable
       end
 
       private
-      
-      attr_reader :env
 
-      def put_connection
-        client.put_item table_name: table_name, item: item
-      end
+      attr_reader :event, :context
 
       def item
         { connection_id: connection_id,
-          updated_at: Time.current.to_s(:db),
+          updated_at: Time.current.to_fs(:db),
           apigw_endpoint: apigw_endpoint,
-          ttl: Time.current.advance(seconds: 60).to_i,
-        }.tap do |md|
-          md[:started_at] = Time.current.to_s(:db) if route_key.connect?
+          connect_env: lambda_event_connect_properties,
+          started_at: Time.current.to_fs(:db),
+          ttl: Time.current.advance(seconds: 60).to_i }
+      end
+
+      def update
+        client.update_item table_name: table_name, key: { connection_id: connection_id }, 
+          update_expression: "SET updated_at = :updated_at, apigw_endpoint = :apigw_endpoint, ttl = :ttl",
+          expression_attribute_values: item.slice(:updated_at, :apigw_endpoint, :ttl).transform_keys { |k| k.inspect }
+      end
+
+      # This creates a new ActionCable connection object for each $default request since 
+      # Lambda does not long running persisted connectoins. Since $default events 
+      # from API Gateway does not include identifing information such as headers, we
+      # retrieve the CONNECT_EVENT_PROPERTIES (such as headers) from the connection recorded 
+      # in DynamoDB. This allows us to merge it with the $default event so connections have 
+      # access again to session information. This simulates the behavior of a persisted 
+      # connection object. We also bypass the following WebSocket behavior since it is not
+      # needed for $default requests when using the #message method:
+      #
+      #   - Connection#on_message(data)
+      #   - Connection#message_buffer.append(message)
+      #   - MessageBuffer#receive(message)
+      #   - Connection#receive(websocket_message)
+      #   - Connection#send_async(:dispatch_websocket_message, websocket_message)
+      #
+      def connection
+        @connection ||= begin
+          connection_class = ActionCable.server.config.connection_class.call
+          connection_class.new ActionCable.server, lambda_rack_env
         end
       end
 
-      def client
-        @client ||= Aws::DynamoDB::Client.new region: ENV['AWS_REGION']
-      end
+      delegate :client, :table_name, to: :class
     end
   end
 end

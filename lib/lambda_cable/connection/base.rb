@@ -3,7 +3,7 @@ module LambdaCable
     module Base
       def initialize(server, env, coder: ActiveSupport::JSON)
         super
-        @websocket = LambdaCable::Connection::WebSocket.new(env, self)
+        @websocket = LambdaCable::Connection::WebSocket.new_from(env, self)
         @message_buffer = LambdaCable::Connection::MessageBuffer.new(self)
       end
 

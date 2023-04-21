@@ -5,9 +5,19 @@ module LambdaCable
     class WebSocket
       include LambdaCable::RackEnvConcerns
 
-      def initialize(env, event_target)
-        @env, @event_target = env, event_target
-        @dynamodb = LambdaCable::Server::ConnectionsDb.new(env)
+      class << self
+
+        def new_from(env, event_target)
+          event = env[Lamby::Rack::LAMBDA_EVENT]
+          context = env[Lamby::Rack::LAMBDA_CONTEXT]
+          new event, context, event_target
+        end
+
+      end
+
+      def initialize(event, context, event_target)
+        @event, @context, @event_target = event, context, event_target
+        @dynamodb = LambdaCable::Server::ConnectionsDb.new(event, context)
       end
 
       def possible?
@@ -51,7 +61,7 @@ module LambdaCable
 
       private
 
-      attr_reader :env, :event_target, :dynamodb
+      attr_reader :event, :context, :event_target, :dynamodb
 
       def open
         dynamodb.open

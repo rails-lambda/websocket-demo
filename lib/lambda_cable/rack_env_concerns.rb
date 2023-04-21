@@ -4,6 +4,8 @@ module LambdaCable
   # into the Rack environment. Other classes use the Lambda `event` and `context` directly.
   # 
   module RackEnvConcerns
+    CONNECT_EVENT_PROPERTIES = ['headers', 'multiValueHeaders']
+
     extend ActiveSupport::Concern
     
     private
@@ -22,7 +24,6 @@ module LambdaCable
         ActiveSupport::StringInquirer.new(key)
       end
     end
-    
 
     def connection_id
       request_context['connectionId']
@@ -40,12 +41,12 @@ module LambdaCable
       defined?(context) ? context : env[Lamby::Rack::LAMBDA_CONTEXT]
     end
 
-    def lambda_cable_message
-      lambda_event['body']
+    def lambda_rack_env
+      Lamby::RackRest.new(lambda_event_with_cable_path, context).env
     end
 
-    def lambda_rack_env
-      Lamby::RackRest.new(event_to_cable, context).env
+    def lambda_event_connect_properties
+      lambda_event.slice(*CONNECT_EVENT_PROPERTIES)
     end
 
     # When the connect happens, it is a proxy from API Gateway which only has a stage path, 
@@ -53,7 +54,7 @@ module LambdaCable
     # event prior to letting Lamby.cmd handle the request. This way we get the full Rails 
     # and Lamby lifecycle as though API Gateway's WebSocket was talking to Rails directly.
     #
-    def event_to_cable
+    def lambda_event_with_cable_path
       mount_path = ActionCable.server.config.mount_path || '/cable'
       lambda_event.dup.tap do |e|
         e['path'] ||= mount_path
@@ -61,15 +62,7 @@ module LambdaCable
         e['requestContext'].merge!({
           "resourcePath": mount_path
         })
-        # e['headers'] ||= {}
-        # e['headers'].merge!(event_to_cable_headers)
       end
-    end
-
-    def event_to_cable_headers
-      return {} if route_key.connect? 
-      origin = ActionCable.server.config.allowed_request_origins.first || apigw_endpoint
-      { 'Orgin' => origin }
     end
   end
 end
