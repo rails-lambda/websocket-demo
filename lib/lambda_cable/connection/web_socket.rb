@@ -52,7 +52,7 @@ module LambdaCable
       end
 
       private
-      
+
       attr_reader :env, :event_target, :dynamodb
 
       def open
