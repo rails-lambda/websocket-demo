@@ -15,15 +15,19 @@ module LambdaCable
       end
 
       def alive?
+        puts "[DEBUG] LambdaCable::Connection::WebSocket#alive? connection_id: #{connection_id}"
+        # return true
         resp = client.get_connection connection_id: connection_id
+        puts "[DEBUG] LambdaCable::Connection::WebSocket#alive? resp: #{resp.inspect}"
         resp.status_code == 200
       rescue Aws::ApiGatewayManagementApi::Errors::GoneException,
              Aws::ApiGatewayManagementApi::Errors::Http410Error
+        # TODO: Should we call close here?
         false
       end
 
       def transmit(data)
-        puts "[DEBUG] LambdaCable::Connection::WebSocket#transmit: #{data.inspect}"
+        puts "[DEBUG] LambdaCable::Connection::WebSocket#transmit connection_id: #{connection_id} data: #{data.inspect}"
         client.post_to_connection data: data, connection_id: connection_id
       rescue Aws::ApiGatewayManagementApi::Errors::GoneException,
              Aws::ApiGatewayManagementApi::Errors::Http410Error => e
@@ -31,7 +35,7 @@ module LambdaCable
       end
 
       def close
-        puts "[DEBUG] LambdaCable::Connection::WebSocket#close"
+        puts "[DEBUG] LambdaCable::Connection::WebSocket#close connection_id: #{connection_id}"
         dynamodb.close
         client.delete_connection connection_id: connection_id
       rescue Aws::ApiGatewayManagementApi::Errors::GoneException,
@@ -57,6 +61,7 @@ module LambdaCable
       end
 
       def client
+        puts "[DEBUG] LambdaCable::Connection::WebSocket#client apigw_endpoint: #{apigw_endpoint}"
         @client ||= Aws::ApiGatewayManagementApi::Client.new(
           region: ENV['AWS_REGION'], 
           endpoint: apigw_endpoint

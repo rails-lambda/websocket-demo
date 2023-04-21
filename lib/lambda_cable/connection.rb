@@ -4,6 +4,7 @@ module LambdaCable
 
     eager_autoload do
       autoload :Base
+      autoload :InternalChannel
       autoload :MessageBuffer
       autoload :StreamEventLoop
       autoload :WebSocket
@@ -12,3 +13,4 @@ module LambdaCable
 end
 
 ActionCable::Connection::Base.prepend LambdaCable::Connection::Base
+ActionCable::Connection::Base.prepend LambdaCable::Connection::InternalChannel

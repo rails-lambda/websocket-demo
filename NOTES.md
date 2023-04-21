@@ -29,6 +29,15 @@
 - [ ] PeriodicTimers (maybe use CloudWatch)
 - [ ] Are pings client side or server side? If server, ignore due to no timeouts?
 
+Internal Channel:
+
+```json
+[DEBUG] SubscriptionAdapter#subscribe to 
+"lamby-ws:action_cable/Z2lkOi8vbGFtYnktd3MvVXNlci9Qcm9mLitBYmUrRWJlcnQ"
+```
+
+First Subscribe:
+
 ```json
 {"command":"subscribe","identifier":"{\"channel\":\"Turbo::StreamsChannel\",\"signed_stream_name\":\"IloybGtPaTh2YkdGdFlua3RkM012VW05dmJTOHgi--38562feb9cd334e9de85098412c02e4693fc606663ce97cd6a56c7e3162821a1\"}"}
 ```
@@ -123,13 +132,34 @@ What does Serverless Event-Driven WebSockets even mean?
 
 - There is no internal "server" channel to send server-side messages to each "running" server. For example, say you want to disconnect a User for some reason. For a K8s pod, they would all be subscribed to an internal channel so they can talk to each other. In this situation, the servers hold state. However, for Lambda, API Gateway holds our state. So there is no need for an internal channel. Instead we send the disconnect message to API Gateway. 
 
-No server side state! Connection#event_loop which is based on the Server#event_loop work is not handled by LambdaPunch after the request/response loop is finished. So just like the ActionCable servers where the main thread is not blocked, we do work in the background. But no long term state is maintained after the request is finished. We also tell ActionCable to use a worker_pool size of 1 since there is no need for this cleverness.
+No server-side state! Connection#event_loop which is based on the Server#event_loop work is not handled by LambdaPunch after the request/response loop is finished. So just like the ActionCable servers where the main thread is not blocked, we do work in the background. But no long-term state is maintained after the request is finished. We also tell ActionCable to use a worker_pool size of 1 since there is no need for this cleverness.
 
-- No need for server restarts or shutdowns events.
+- No need for server restarts or shutdown events.
 - Worker pools are always empty after each request thanks to LambdaPunch.
 - No such thing as asking an individual server for its statistics. It holds nothing.
 - No WebSocket message callbacks, simply just wait for an invoke event.
 
+> WRT ActionCable::Channel
+> 
+> This may be seconds, minutes, hours, or even days. That means you have to take special care
+> not to do anything silly in a channel that would balloon its memory footprint or whatever...
+> 
+> The upside... you can use instance variables to keep reference to objects that future 
+> subscriber requests can interact with using `subscribed` hooks.
+
+```ruby
+class ChatChannel < ApplicationCable::Channel
+  def subscribed
+    @room = Chat::Room[params[:room_number]]
+  end
+
+  def speak(data)
+    @room.speak data, user: current_user
+  end
+end
+```
+
+When you do not have a constant CONNECTION, you must store state somewhere else. We use DynamoDB for this. Specifically call out session for identified by.
 
 ### Adding CloudFront Distribution
 
