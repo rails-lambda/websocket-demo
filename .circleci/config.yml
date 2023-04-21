@@ -60,7 +60,12 @@ jobs:
             --remote-env AWS_DEFAULT_REGION=us-east-1
             --remote-env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
             --remote-env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-          cmd: ./bin/deploy
+          cmd: |
+            ./bin/deploy
+            aws logs delete-log-group --log-group-name "/aws/lambda/lamby-ws-production-RailsLambda-5ffUQ1Nuz6ij"
+            aws logs delete-log-group --log-group-name "/aws/lambda/lamby-ws-production-WSConnectLambda-5in18cNskwz6"
+            aws logs delete-log-group --log-group-name "/aws/lambda/lamby-ws-production-WSDefaultLambda-dUMtdfelRbcl"
+            aws logs delete-log-group --log-group-name "/aws/lambda/lamby-ws-production-WSDisconnectLambda-V7HcDabRur6K"
 workflows:
   # test:
   #   # when: { equal: [ test, << pipeline.parameters.workflow >> ] }
