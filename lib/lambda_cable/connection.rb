@@ -12,5 +12,6 @@ module LambdaCable
   end
 end
 
+ActionCable::Connection::Base.prepend LambdaCable::RackEnvConcerns
 ActionCable::Connection::Base.prepend LambdaCable::Connection::Base
 ActionCable::Connection::Base.prepend LambdaCable::Connection::InternalChannel

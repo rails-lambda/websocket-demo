@@ -104,23 +104,23 @@ config.session_store :cookie_store, expire_after: 1.day, key: '_session'
 
 ```shell
 wscat --connect wss://lamby-ws.custominktech.com/cable \
-      --origin https://lamby-ws.custominktech.com
+      --origin "https://lamby-ws.custominktech.com" \
+      --header "Sec-WebSocket-Protocol:actioncable-v1-json" \
+      --protocol "13"
 
-aws apigatewaymanagementapi get-connection \
-    --endpoint-url "https://3iku9itbbb.execute-api.us-east-1.amazonaws.com/cable" \
-    --connection-id "DiszOeQQoAMCEsw="
-
-aws apigatewaymanagementapi post-to-connection \
-  --endpoint-url "https://3iku9itbbb.execute-api.us-east-1.amazonaws.com/cable" \
-  --connection-id "DiszOeQQoAMCEsw=" \
-  --data "eyJ0eXBlIjoid2VsY29tZSJ9"
+{"command":"subscribe","identifier":"{\"channel\":\"Turbo::StreamsChannel\",\"signed_stream_name\":\"IloybGtPaTh2YkdGdFlua3RkM012VW05dmJTOHgi--38562feb9cd334e9de85098412c02e4693fc606663ce97cd6a56c7e3162821a1\"}"}
 ```
 
+```ruby
+require 'aws-sdk-apigatewaymanagementapi'
+endpoint = "https://3iku9itbbb.execute-api.us-east-1.amazonaws.com/cable"
+client = Aws::ApiGatewayManagementApi::Client.new region: 'us-east-1', endpoint: endpoint
 
+connection_id = "DypiPd-jIAMCKKw="
 
-
-
-
+client.get_connection connection_id: connection_id
+client.post_to_connection data: JSON.dump({type: 'welcome'}), connection_id: connection_id
+```
 
 
 ## Guide Notes
@@ -162,7 +162,7 @@ class ChatChannel < ApplicationCable::Channel
 end
 ```
 
-When you do not have a constant CONNECTION, you must store state somewhere else. We use DynamoDB for this. Specifically call out session for identified by.
+When you do not have a constant CONNECTION, you must store state somewhere else. We use DynamoDB for this. Specifically, call out the session for identified by.
 
 ### Adding CloudFront Distribution
 

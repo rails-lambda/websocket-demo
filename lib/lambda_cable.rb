@@ -9,6 +9,7 @@ require 'logger'
 require 'action_cable'
 require 'lambda_cable/version'
 # Force freedom patching with Module.prepend.
+require 'lambda_cable/rack_env_concerns'
 require 'lambda_cable/connection'
 require 'lambda_cable/server'
 

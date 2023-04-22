@@ -26,27 +26,32 @@ module LambdaCable
 
       def alive?
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#alive? connection_id: #{connection_id}"
+        # TODO: Why does this not work as expected?
         return true
         resp = client.get_connection connection_id: connection_id
         resp.status_code == 200
       rescue Aws::ApiGatewayManagementApi::Errors::GoneException,
              Aws::ApiGatewayManagementApi::Errors::Http410Error
         # TODO: Should we call close here?
-        false
+        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#alive? FALSE"
+        true
+        # false
       end
 
       def transmit(data)
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#transmit connection_id: #{connection_id} data: #{data.inspect}"
         client.post_to_connection data: data, connection_id: connection_id
+        LambdaPunch.push { dynamodb.update }
       rescue Aws::ApiGatewayManagementApi::Errors::GoneException,
              Aws::ApiGatewayManagementApi::Errors::Http410Error => e
-        close
+        # TODO: Should we call close here?
+        # close
       end
 
       def close
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#close connection_id: #{connection_id}"
-        dynamodb.close
         client.delete_connection connection_id: connection_id
+        LambdaPunch.push { dynamodb.close }
       rescue Aws::ApiGatewayManagementApi::Errors::GoneException,
              Aws::ApiGatewayManagementApi::Errors::Http410Error
       end

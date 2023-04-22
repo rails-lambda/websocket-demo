@@ -8,7 +8,7 @@ ENTRYPOINT [ "/usr/local/bundle/bin/aws_lambda_ric" ]
 ENV LD_PRELOAD=/opt/lib/libcrypteia.so
 
 # Install LambdaPunch.
-RUN gem install lambda_punch && lambda_punch install
+RUN gem install lambda_punch -v 1.1.3 && lambda_punch install
 ENV LAMBDA_TASK_ROOT=/app
 
 # Create a secure user for prod and app directory.

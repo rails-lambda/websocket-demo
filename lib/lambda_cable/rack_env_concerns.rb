@@ -4,8 +4,6 @@ module LambdaCable
   # into the Rack environment. Other classes use the Lambda `event` and `context` directly.
   # 
   module RackEnvConcerns
-    CONNECT_EVENT_PROPERTIES = ['headers', 'multiValueHeaders']
-
     extend ActiveSupport::Concern
     
     private
@@ -39,14 +37,6 @@ module LambdaCable
 
     def lambda_context
       defined?(context) ? context : env[Lamby::Rack::LAMBDA_CONTEXT]
-    end
-
-    def lambda_rack_env
-      Lamby::RackRest.new(lambda_event_with_cable_path, context).env
-    end
-
-    def lambda_event_connect_properties
-      lambda_event.slice(*CONNECT_EVENT_PROPERTIES)
     end
 
     # When the connect happens, it is a proxy from API Gateway which only has a stage path, 
