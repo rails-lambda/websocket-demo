@@ -126,19 +126,6 @@ Resources:
       Roles:
         - !Ref RailsLambdaRole
 
-  WSConnectLambda:
-    Type: AWS::Serverless::Function
-    Metadata:
-      DockerContext: .
-      Dockerfile: Dockerfile
-      DockerTag: ws-connect
-    Properties:
-      MemorySize: 1792
-      PackageType: Image
-      Role: !GetAtt RailsLambdaRole.Arn
-      ImageConfig:
-        Command: ["config/environment.LambdaCable.cmd"]
-  
   WSConnectRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
@@ -153,30 +140,7 @@ Resources:
     Properties:
       ApiId: !Ref WSApi
       IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WSConnectLambda.Arn}/invocations
-
-  WSConnectPermission:
-    Type: AWS::Lambda::Permission
-    DependsOn:
-      - WSApi
-      - WSConnectLambda
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref WSConnectLambda
-      Principal: apigateway.amazonaws.com
-
-  WSDefaultLambda:
-    Type: AWS::Serverless::Function
-    Metadata:
-      DockerContext: .
-      Dockerfile: Dockerfile
-      DockerTag: ws-default
-    Properties:
-      MemorySize: 1792
-      PackageType: Image
-      Role: !GetAtt RailsLambdaRole.Arn
-      ImageConfig:
-        Command: ["config/environment.LambdaCable.cmd"]
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RailsLambda.Arn}:live/invocations
 
   WSDefaultRoute:
     Type: AWS::ApiGatewayV2::Route
@@ -192,30 +156,7 @@ Resources:
     Properties:
       ApiId: !Ref WSApi
       IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WSDefaultLambda.Arn}/invocations
-
-  WSDefaultPermission:
-    Type: AWS::Lambda::Permission
-    DependsOn:
-      - WSApi
-      - WSDefaultLambda
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref WSDefaultLambda
-      Principal: apigateway.amazonaws.com
-
-  WSDisconnectLambda:
-    Type: AWS::Serverless::Function
-    Metadata:
-      DockerContext: .
-      Dockerfile: Dockerfile
-      DockerTag: ws-disconnect
-    Properties:
-      MemorySize: 1792
-      PackageType: Image
-      Role: !GetAtt RailsLambdaRole.Arn
-      ImageConfig:
-        Command: ["config/environment.LambdaCable.cmd"]
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RailsLambda.Arn}:live/invocations
 
   WSDisconnectRoute:
     Type: AWS::ApiGatewayV2::Route
@@ -231,16 +172,16 @@ Resources:
     Properties:
       ApiId: !Ref WSApi
       IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WSDisconnectLambda.Arn}/invocations
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RailsLambda.Arn}:live/invocations
 
-  WSDisconnectPermission:
+  WSPermission:
     Type: AWS::Lambda::Permission
     DependsOn:
       - WSApi
-      - WSDisconnectLambda
+      - RailsLambda
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !Ref WSDisconnectLambda
+      FunctionName: !Ref RailsLambda
       Principal: apigateway.amazonaws.com
 
 Outputs:
