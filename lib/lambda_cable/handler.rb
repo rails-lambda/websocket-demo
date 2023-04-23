@@ -6,6 +6,11 @@ module LambdaCable
       new(event, context).handle
     end
 
+    def self.handle?(event, context)
+      event.dig('requestContext', 'connectionId') &&
+        /\$(connect|default|disconnect)/ === event.dig('requestContext', 'routeKey')
+    end
+
     def initialize(event, context)
       @event, @context = event, context
       LambdaCable.logger.debug "[DEBUG] LambdaCable::Handler#initialize event: #{event.inspect} context: #{context.inspect}"

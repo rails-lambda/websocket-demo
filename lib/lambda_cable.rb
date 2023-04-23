@@ -27,6 +27,10 @@ module LambdaCable
     Handler.cmd(event: event, context: context)
   end
 
+  def self.handle?(event, context)
+    Handler.handle?(event, context)
+  end
+
   def self.logger
     @logger ||= LambdaCable::Logger.new.logger
   end
