@@ -16,9 +16,6 @@ Globals:
   Function:
     Architectures:
       - arm64
-    AutoPublishAlias: live
-    DeploymentPreference:
-      Type: AllAtOnce
     Environment:
       Variables:
         RAILS_ENV: !Ref RailsEnv
