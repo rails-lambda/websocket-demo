@@ -23,8 +23,8 @@ Globals:
       Variables:
         RAILS_ENV: !Ref RailsEnv
         DATABASE_URL: x-crypteia-ssm:/lamby-ws/env/DATABASE_URL
-        # LAMBDA_CABLE_CONNECTIONS_TABLE: !Ref WSConnectionsTable
-        # LAMBDA_CABLE_SUBSCRIPTIONS_TABLE: !Ref WSSubscriptionsTable
+        LAMBDA_CABLE_CONNECTIONS_TABLE: !Ref WSConnectionsTable
+        LAMBDA_CABLE_SUBSCRIPTIONS_TABLE: !Ref WSSubscriptionsTable
         LAMBDA_CABLE_LOG_LEVEL: debug
     Timeout: 30
 
@@ -48,141 +48,141 @@ Resources:
             Resource:
               - !Sub arn:aws:ssm:*:${AWS::AccountId}:parameter/lamby-ws/env/*
 
-  # WSConnectionsTable:
-  #   Type: AWS::DynamoDB::Table
-  #   Properties:
-  #     KeySchema:
-  #       - AttributeName: connection_id
-  #         KeyType: HASH
-  #     AttributeDefinitions:
-  #       - AttributeName: connection_id
-  #         AttributeType: S
-  #     BillingMode: PAY_PER_REQUEST
-  #     TimeToLiveSpecification:
-  #       AttributeName: ttl
-  #       Enabled: true
+  WSConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: connection_id
+          KeyType: HASH
+      AttributeDefinitions:
+        - AttributeName: connection_id
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
 
-  # WSSubscriptionsTable:
-  #   Type: AWS::DynamoDB::Table
-  #   Properties:
-  #     KeySchema:
-  #       - AttributeName: connection_id
-  #         KeyType: HASH
-  #       - AttributeName: channel_name
-  #         KeyType: RANGE
-  #     AttributeDefinitions:
-  #       - AttributeName: connection_id
-  #         AttributeType: S
-  #       - AttributeName: channel_name
-  #         AttributeType: S
-  #     BillingMode: PAY_PER_REQUEST
-  #     TimeToLiveSpecification:
-  #       AttributeName: ttl
-  #       Enabled: true
+  WSSubscriptionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: connection_id
+          KeyType: HASH
+        - AttributeName: channel_name
+          KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: connection_id
+          AttributeType: S
+        - AttributeName: channel_name
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
 
-  # WSTableConnections:
-  #   Type: AWS::Serverless::Connector
-  #   Properties:
-  #     Source: { Id: RailsLambda }
-  #     Destination:
-  #       - Id: WSConnectionsTable
-  #       - Id: WSSubscriptionsTable
-  #     Permissions: [Read, Write]
+  WSTableConnections:
+    Type: AWS::Serverless::Connector
+    Properties:
+      Source: { Id: RailsLambda }
+      Destination:
+        - Id: WSConnectionsTable
+        - Id: WSSubscriptionsTable
+      Permissions: [Read, Write]
   
-  # WSApi:
-  #   Type: AWS::ApiGatewayV2::Api
-  #   Properties:
-  #     Name: !Ref RailsLambda
-  #     ProtocolType: WEBSOCKET
-  #     RouteSelectionExpression: "$request.body.message"
+  WSApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Ref RailsLambda
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: "$request.body.message"
 
-  # WSDeployment:
-  #   Type: AWS::ApiGatewayV2::Deployment
-  #   DependsOn:
-  #     - WSConnectRoute
-  #     - WSDefaultRoute
-  #     - WSDisconnectRoute
-  #   Properties:
-  #     ApiId: !Ref WSApi
+  WSDeployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+      - WSConnectRoute
+      - WSDefaultRoute
+      - WSDisconnectRoute
+    Properties:
+      ApiId: !Ref WSApi
 
-  # WSStage:
-  #   Type: AWS::ApiGatewayV2::Stage
-  #   Properties:
-  #     StageName: cable
-  #     DeploymentId: !Ref WSDeployment
-  #     ApiId: !Ref WSApi
+  WSStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: cable
+      DeploymentId: !Ref WSDeployment
+      ApiId: !Ref WSApi
 
-  # WSPolicy:
-  #   Type: AWS::IAM::Policy
-  #   DependsOn: RailsLambdaRole
-  #   Properties:
-  #     PolicyName: !Sub "${RailsLambda}-ws-policy"
-  #     PolicyDocument:
-  #       Statement:
-  #         - Effect: Allow
-  #           Action: ["execute-api:Invoke", "execute-api:ManageConnections"]
-  #           Resource: 
-  #             - !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WSApi}/*
-  #     Roles:
-  #       - !Ref RailsLambdaRole
+  WSPolicy:
+    Type: AWS::IAM::Policy
+    DependsOn: RailsLambdaRole
+    Properties:
+      PolicyName: !Sub "${RailsLambda}-ws-policy"
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: ["execute-api:Invoke", "execute-api:ManageConnections"]
+            Resource: 
+              - !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WSApi}/*
+      Roles:
+        - !Ref RailsLambdaRole
 
-  # WSConnectRoute:
-  #   Type: AWS::ApiGatewayV2::Route
-  #   Properties:
-  #     ApiId: !Ref WSApi
-  #     AuthorizationType: NONE
-  #     RouteKey: "$connect"
-  #     OperationName: WSConnectRoute
-  #     Target: !Sub integrations/${WSConnectIntegration}
+  WSConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WSApi
+      AuthorizationType: NONE
+      RouteKey: "$connect"
+      OperationName: WSConnectRoute
+      Target: !Sub integrations/${WSConnectIntegration}
 
-  # WSConnectIntegration:
-  #   Type: AWS::ApiGatewayV2::Integration
-  #   Properties:
-  #     ApiId: !Ref WSApi
-  #     IntegrationType: AWS_PROXY
-  #     IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RailsLambda.Arn}:live/invocations
+  WSConnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WSApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RailsLambda.Arn}:live/invocations
 
-  # WSDefaultRoute:
-  #   Type: AWS::ApiGatewayV2::Route
-  #   Properties:
-  #     ApiId: !Ref WSApi
-  #     AuthorizationType: NONE
-  #     RouteKey: "$default"
-  #     OperationName: WSDefaultRoute
-  #     Target: !Sub integrations/${WSDefaultIntegration}
+  WSDefaultRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WSApi
+      AuthorizationType: NONE
+      RouteKey: "$default"
+      OperationName: WSDefaultRoute
+      Target: !Sub integrations/${WSDefaultIntegration}
 
-  # WSDefaultIntegration:
-  #   Type: AWS::ApiGatewayV2::Integration
-  #   Properties:
-  #     ApiId: !Ref WSApi
-  #     IntegrationType: AWS_PROXY
-  #     IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RailsLambda.Arn}:live/invocations
+  WSDefaultIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WSApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RailsLambda.Arn}:live/invocations
 
-  # WSDisconnectRoute:
-  #   Type: AWS::ApiGatewayV2::Route
-  #   Properties:
-  #     ApiId: !Ref WSApi
-  #     AuthorizationType: NONE
-  #     RouteKey: "$disconnect"
-  #     OperationName: WSDisconnectRoute
-  #     Target: !Sub integrations/${WSDisconnectIntegration}
+  WSDisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WSApi
+      AuthorizationType: NONE
+      RouteKey: "$disconnect"
+      OperationName: WSDisconnectRoute
+      Target: !Sub integrations/${WSDisconnectIntegration}
 
-  # WSDisconnectIntegration:
-  #   Type: AWS::ApiGatewayV2::Integration
-  #   Properties:
-  #     ApiId: !Ref WSApi
-  #     IntegrationType: AWS_PROXY
-  #     IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RailsLambda.Arn}:live/invocations
+  WSDisconnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WSApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RailsLambda.Arn}:live/invocations
 
-  # WSPermission:
-  #   Type: AWS::Lambda::Permission
-  #   DependsOn:
-  #     - WSApi
-  #     - RailsLambda
-  #   Properties:
-  #     Action: lambda:InvokeFunction
-  #     FunctionName: !Ref RailsLambda
-  #     Principal: apigateway.amazonaws.com
+  WSPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - WSApi
+      - RailsLambda
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref RailsLambda
+      Principal: apigateway.amazonaws.com
 
 Outputs:
 
