@@ -16,6 +16,9 @@ Globals:
   Function:
     Architectures:
       - arm64
+    AutoPublishAlias: live
+    DeploymentPreference:
+      Type: AllAtOnce
     Environment:
       Variables:
         RAILS_ENV: !Ref RailsEnv
@@ -155,17 +158,15 @@ Resources:
     Properties:
       ApiId: !Ref WSApi
       IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RailsLambda.Arn}/invocations
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RailsLambda.Arn}:live/invocations
 
   WSPermission:
     Type: AWS::Lambda::Permission
-    DependsOn:
-      - WSApi
-      - RailsLambda
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !Ref RailsLambda
+      FunctionName: !Sub "${RailsLambda}:live"
       Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WSApi}/*
 
 Outputs:
 
