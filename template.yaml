@@ -133,14 +133,7 @@ Resources:
       AuthorizationType: NONE
       RouteKey: "$connect"
       OperationName: WSConnectRoute
-      Target: !Sub integrations/${WSConnectIntegration}
-
-  WSConnectIntegration:
-    Type: AWS::ApiGatewayV2::Integration
-    Properties:
-      ApiId: !Ref WSApi
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RailsLambda.Arn}:live/invocations
+      Target: !Sub integrations/${WSIntegration}
 
   WSDefaultRoute:
     Type: AWS::ApiGatewayV2::Route
@@ -149,14 +142,7 @@ Resources:
       AuthorizationType: NONE
       RouteKey: "$default"
       OperationName: WSDefaultRoute
-      Target: !Sub integrations/${WSDefaultIntegration}
-
-  WSDefaultIntegration:
-    Type: AWS::ApiGatewayV2::Integration
-    Properties:
-      ApiId: !Ref WSApi
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RailsLambda.Arn}:live/invocations
+      Target: !Sub integrations/${WSIntegration}
 
   WSDisconnectRoute:
     Type: AWS::ApiGatewayV2::Route
@@ -165,9 +151,9 @@ Resources:
       AuthorizationType: NONE
       RouteKey: "$disconnect"
       OperationName: WSDisconnectRoute
-      Target: !Sub integrations/${WSDisconnectIntegration}
+      Target: !Sub integrations/${WSIntegration}
 
-  WSDisconnectIntegration:
+  WSIntegration:
     Type: AWS::ApiGatewayV2::Integration
     Properties:
       ApiId: !Ref WSApi
