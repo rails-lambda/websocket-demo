@@ -110,7 +110,7 @@ Rails.application.configure do
   config.action_cable.worker_pool_size = 1
   config.action_cable.allowed_request_origins = ['https://lamby-ws.custominktech.com']
   config.to_prepare { LambdaPunch.start_server! }
-  # config.lamby.handled_proc = Proc.new do |_event, context|
-  #   LambdaPunch.handled!(context)
-  # end
+  config.lamby.handled_proc = Proc.new do |_event, context|
+    LambdaPunch.handled!(context)
+  end
 end

@@ -175,7 +175,7 @@ From the CloudFront Distribution created in the Custom Domain Names
 - Origin domain: Ex: 3iku9itbbb.execute-api.us-east-1.amazonaws.com (⚠️ Use proper region)
 - Protocol: HTTPS only
   Minimum origin SSL protocol: TLSv1
-- Origin path: cable
+- Origin path: (none)
 - Add Custom Header: X-Forwarded-Host myapp.example.com
 
 Now add a new behavior using this origin.
