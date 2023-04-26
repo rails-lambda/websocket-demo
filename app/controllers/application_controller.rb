@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   end
 
   def logout
-    session.delete(:user)
+    session.clear
     redirect_to root_url
   end
 
