@@ -113,13 +113,13 @@ wscat --connect wss://lamby-ws.custominktech.com/cable \
 
 ```ruby
 require 'aws-sdk-apigatewaymanagementapi'
-endpoint = "https://3iku9itbbb.execute-api.us-east-1.amazonaws.com/cable"
+endpoint = "https://9csdzcpwbd.execute-api.us-east-1.amazonaws.com/cable"
 client = Aws::ApiGatewayManagementApi::Client.new region: 'us-east-1', endpoint: endpoint
 
-connection_id = "DypiPd-jIAMCKKw="
+connection_id = "D9nJYcssoAMCKBA="
 
 client.get_connection connection_id: connection_id
-client.post_to_connection data: JSON.dump({type: 'welcome'}), connection_id: connection_id
+client.post_to_connection data: JSON.dump({type: 'ping'}), connection_id: connection_id
 ```
 
 

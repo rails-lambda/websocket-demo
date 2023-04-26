@@ -29,6 +29,12 @@ module LambdaCable
         @message_buffer = LambdaCable::Connection::MessageBuffer.new(self)
       end
 
+      # Override: So we can append a connection_id to the message. Helps with dev/debugging.
+      # 
+      def send_welcome_message
+        transmit type: ActionCable::INTERNAL[:message_types][:welcome], connection_id: connection_id
+      end
+
       # Override: Async for us, is using LambaPunch to process blocks after the response.
       # 
       def send_async(method, *arguments)

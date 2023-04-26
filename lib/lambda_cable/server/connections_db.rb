@@ -3,7 +3,7 @@ require 'aws-sdk-dynamodb'
 module LambdaCable
   module Server
     class ConnectionsDb
-      TTL_VALUE = 120 # TODO: Shorter? Longer?
+      TTL_VALUE = 10.minutes
       CONNECTED_EVENT_PROPERTIES = ['headers', 'multiValueHeaders']
 
       include LambdaCable::RackEnvConcerns
