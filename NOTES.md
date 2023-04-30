@@ -177,22 +177,9 @@ From the CloudFront Distribution created in the Custom Domain Names
   Minimum origin SSL protocol: TLSv1
 - Origin path: (none)
 - Add Custom Header: X-Forwarded-Host myapp.example.com
+- Name: apigw (up to you)
 
-Now add a new behavior using this origin.
-
-- Click "Behaviors" tab
-- Click "Create behavior" 
-- Path pattern: 
-- Origin (From previous step)
-- Viewer protocol policy: HTTPS only
-- Allowed HTTP Methods: GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE
-- 🔘 Cache policy and origin request policy (recommended)
-  - Cache policy: Caching Disabled
-  - Origin request policy: WebSockets
-
-https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-working-with.websockets.html
-
-From CloudFront main screen:
+Before we create a new `/cable` path behavior, we are going to need to create a new origin request policy [specifically for WebSockets](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-working-with.websockets.html). From CloudFront **main** screen:
 
 - Click "Policies" in left panel
 - Click "Origin request" tab
@@ -206,6 +193,18 @@ From CloudFront main screen:
   - Sec-WebSocket-Extensions
 - Query strings: None
 - Cookies: All
+
+Now, return to your specific CloudFront distribution so we can setup your `/cable` behavior.
+
+- Click "Behaviors" tab
+- Click "Create behavior" 
+- Path pattern: /cable
+- Origin (from previous step, ex: apigw)
+- Viewer protocol policy: HTTPS only
+- Allowed HTTP Methods: GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE
+- 🔘 Cache policy and origin request policy (recommended)
+  - Cache policy: Caching Disabled
+  - Origin request policy: WebSockets
 
 Add something about these configs.
 

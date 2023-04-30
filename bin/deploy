@@ -63,13 +63,7 @@ sam deploy \
   --image-repository "$IMAGE_REPOSITORY" \
   --capabilities "CAPABILITY_IAM" \
   --parameter-overrides \
-    RailsEnv="${RAILS_ENV}" \
-   --tags \
-    "env=papa" \
-    "group=webops" \
-    "team=webops" \
-    "application=lamby" \
-    "owner=kcollins"
+    RailsEnv="${RAILS_ENV}"
 
 if [ "$CI" != "true" ]; then
   echo "== Cleaning prod deploy dependencies from local. =="
