@@ -33,7 +33,7 @@ Internal Channel:
 
 ```json
 [DEBUG] SubscriptionAdapter#subscribe to 
-"lamby-ws:action_cable/Z2lkOi8vbGFtYnktd3MvVXNlci9Qcm9mLitBYmUrRWJlcnQ"
+"websocket-demo:action_cable/Z2lkOi8vbGFtYnktd3MvVXNlci9Qcm9mLitBYmUrRWJlcnQ"
 ```
 
 First Subscribe:
@@ -103,8 +103,8 @@ config.session_store :cookie_store, expire_after: 1.day, key: '_session'
 ## Testing Connection Timeout
 
 ```shell
-wscat --connect wss://lamby-ws.custominktech.com/cable \
-      --origin "https://lamby-ws.custominktech.com" \
+wscat --connect wss://websockets.lamby.cloud/cable \
+      --origin "https://websockets.lamby.cloud" \
       --header "Sec-WebSocket-Protocol:actioncable-v1-json" \
       --protocol "13"
 
@@ -213,6 +213,6 @@ Add something about these configs.
 config.action_cable.disable_request_forgery_protection = true
 config.action_cable.allowed_request_origins = [
   /execute-api.us-east-1.amazonaws.com/,
-  'https://lamby-ws.custominktech.com'
+  'https://websockets.lamby.cloud'
 ]
 ```

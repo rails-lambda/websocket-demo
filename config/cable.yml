@@ -8,4 +8,4 @@ test:
 
 production:
   adapter: lambda_cable
-  channel_prefix: lamby-ws
+  channel_prefix: websocket-demo

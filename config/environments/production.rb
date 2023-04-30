@@ -60,7 +60,7 @@ Rails.application.configure do
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter     = :resque
-  # config.active_job.queue_name_prefix = "lamby-ws-production"
+  # config.active_job.queue_name_prefix = "websocket-demo-production"
 
   config.action_mailer.perform_caching = false
 
@@ -91,7 +91,7 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  # LambyWS
+  # WebsocketDemo
   # -------
   logger = ActiveSupport::Logger.new(STDOUT)
   logger.formatter = ActiveSupport::Logger::SimpleFormatter.new
@@ -108,7 +108,7 @@ Rails.application.configure do
   # end
   require 'lambda_cable'
   config.action_cable.worker_pool_size = 1
-  config.action_cable.allowed_request_origins = ['https://lamby-ws.custominktech.com']
+  config.action_cable.allowed_request_origins = ['https://websockets.lamby.cloud']
   config.to_prepare { LambdaPunch.start_server! }
   config.lamby.handled_proc = Proc.new do |_event, context|
     LambdaPunch.handled!(context)

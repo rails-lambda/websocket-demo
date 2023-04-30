@@ -9,11 +9,11 @@ default: &default
 
 development:
   <<: *default
-  database: lamby-ws
+  database: websocket-demo
 
 test:
   <<: *default
-  database: lamby-ws-test
+  database: websocket-demo-test
 
 production:
   <<: *default

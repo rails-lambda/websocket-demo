@@ -3,9 +3,7 @@
   "dockerComposeFile": "docker-compose.yml",
   "customizations": {
     "vscode": {
-      "extensions": [
-        "rebornix.ruby"
-      ]
+      "extensions": ["rebornix.ruby"]
     }
   },
   "features": {
@@ -19,9 +17,9 @@
   "remoteEnv": {
     "COMPOSE_HTTP_TIMEOUT": "300"
   },
-  "workspaceFolder": "/workspaces/lamby-ws",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/lamby-ws,type=bind,consistency=cached",
+  "workspaceFolder": "/workspaces/websocket-demo",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/websocket-demo,type=bind,consistency=cached",
   "mounts": [
-    "source=${localWorkspaceFolder},target=/workspaces/lamby-ws,type=bind,consistency=cached"
+    "source=${localWorkspaceFolder},target=/workspaces/websocket-demo,type=bind,consistency=cached"
   ]
 }

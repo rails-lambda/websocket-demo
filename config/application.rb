@@ -6,7 +6,7 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module LambyWs
+module WebsocketDemo
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
@@ -19,7 +19,7 @@ module LambyWs
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    # LambyWS
+    # WebsocketDemo
     # -------
     config.session_store :cookie_store, expire_after: 1.day, key: '_session'
   end

@@ -22,7 +22,7 @@ Globals:
     Environment:
       Variables:
         RAILS_ENV: !Ref RailsEnv
-        DATABASE_URL: x-crypteia-ssm:/lamby-ws/env/DATABASE_URL
+        DATABASE_URL: x-crypteia-ssm:/websocket-demo/env/DATABASE_URL
         LAMBDA_CABLE_CONNECTIONS_TABLE: !Ref WSConnectionsTable
         LAMBDA_CABLE_SUBSCRIPTIONS_TABLE: !Ref WSSubscriptionsTable
         LAMBDA_CABLE_LOG_LEVEL: debug
@@ -46,7 +46,7 @@ Resources:
           - Effect: Allow
             Action: ["ssm:Get*", "ssm:Describe*"]
             Resource:
-              - !Sub arn:aws:ssm:*:${AWS::AccountId}:parameter/lamby-ws/env/*
+              - !Sub arn:aws:ssm:*:${AWS::AccountId}:parameter/websocket-demo/env/*
 
   WSConnectionsTable:
     Type: AWS::DynamoDB::Table
