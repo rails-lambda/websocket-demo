@@ -50,8 +50,8 @@ module LambdaCable
 
       def close
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#close connection_id: #{connection_id}"
-        client.delete_connection connection_id: connection_id
         LambdaPunch.push { dynamodb.close }
+        client.delete_connection connection_id: connection_id
       rescue Aws::ApiGatewayManagementApi::Errors::GoneException,
              Aws::ApiGatewayManagementApi::Errors::Http410Error
       end

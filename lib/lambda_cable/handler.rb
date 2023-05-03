@@ -13,7 +13,6 @@ module LambdaCable
 
     def initialize(event, context)
       @event, @context = event, context
-      LambdaCable.logger.debug "[DEBUG] LambdaCable::Handler#initialize event: #{event.inspect} context: #{context.inspect}"
     end
 
     def handle
@@ -34,7 +33,7 @@ module LambdaCable
     end
 
     def disconnect
-      # connection...
+      connection.send_async :handle_close
       { statusCode: 200 }
     end
 

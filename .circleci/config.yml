@@ -4,6 +4,8 @@ default-machine: &default-machine
     docker_layer_caching: true
   resource_class: arm.large
 version: 2.1
+orbs:
+  aws-cli: circleci/aws-cli@3.1
 parameters:
   workflow:
     type: enum
@@ -27,6 +29,10 @@ commands:
       args: { type: string, default: "" }
       options: { type: string, default: "" }
     steps:
+      - attach_workspace:
+          at: .
+      - run: |
+          [ -f aws.env ] && cat aws.env >> "$BASH_ENV" && rm aws.env
       - run: >
           devcontainer exec 
           --workspace-folder . 
@@ -40,6 +46,22 @@ jobs:
       - checkout
       - devcontainer-install
       - devcontainer-build
+  aws-oidc:
+    executor: aws-cli/default
+    steps:
+      - aws-cli/setup:
+          role-arn: 'arn:aws:iam::589405201853:role/websocket-demo-oidc-CircleCIRole-RD3F9IY5KQHZ'
+          role-session-name: circleci
+          session-duration: '900'
+      - run:
+          name: Store Env Variables
+          command: |
+            echo "export AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\"" > aws.env
+            echo "export AWS_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\"" >> aws.env
+            echo "export AWS_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\"" >> aws.env
+      - persist_to_workspace:
+          root: .
+          paths: [ aws.env ]
   # test-job:
   #   <<: *default-machine
   #   steps:
@@ -60,6 +82,7 @@ jobs:
             --remote-env AWS_DEFAULT_REGION=us-east-1
             --remote-env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
             --remote-env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            --remote-env AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN
           cmd: |
             ./bin/deploy
 workflows:
@@ -73,6 +96,6 @@ workflows:
     # when: { equal: [ deploy, << pipeline.parameters.workflow >> ] }
     jobs:
       - devcontainer
-      - deploy-job:
-          requires: [devcontainer]
-  
+      - aws-oidc: { requires: [devcontainer] }          
+      - deploy-job: { requires: [aws-oidc] }
+
