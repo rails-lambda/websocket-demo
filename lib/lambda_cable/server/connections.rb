@@ -11,7 +11,7 @@ module LambdaCable
       end
 
       def remove_connection(connection)
-        connection
+        connection.close
       end
 
       def setup_heartbeat_timer

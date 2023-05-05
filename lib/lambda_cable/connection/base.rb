@@ -69,19 +69,6 @@ module LambdaCable
 
       private
 
-      def handle_close
-        logger.info finished_request_message
-        puts '1'
-        server.remove_connection(self)
-        puts '2'
-        subscriptions.unsubscribe_from_all
-        puts '3'
-        unsubscribe_from_internal_channel
-        puts '4'
-        disconnect if respond_to?(:disconnect)
-        puts '5'
-      end
-
     end
   end
 end
