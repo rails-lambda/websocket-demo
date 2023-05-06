@@ -4,6 +4,7 @@ module LambdaCable
 
     eager_autoload do
       autoload :Base
+      autoload :Error
       autoload :InternalChannel
       autoload :MessageBuffer
       autoload :StreamEventLoop

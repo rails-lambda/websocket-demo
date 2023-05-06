@@ -43,7 +43,11 @@ module LambdaCable
 
       def dispatch_lambda_message
         message = JSON.parse lambda_event['body']
-        transmit identifier: message['identifier'], type: ActionCable::INTERNAL[:message_types][:confirmation]
+        case message['type']
+        when 'ping' then transmit ActionCable::INTERNAL[:message_types][:ping]
+        else
+          transmit identifier: message['identifier'], type: ActionCable::INTERNAL[:message_types][:confirmation]
+        end
         # dispatch_websocket_message lambda_event['body']
       end
 

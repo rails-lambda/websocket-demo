@@ -28,9 +28,8 @@ module LambdaCable
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#alive? connection_id: #{connection_id}"
         resp = client.get_connection connection_id: connection_id
         resp.status_code == 200
-      rescue Aws::ApiGatewayManagementApi::Errors::GoneException,
-             Aws::ApiGatewayManagementApi::Errors::Http410Error
-        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#alive? FALSE"
+      rescue *LambdaCable::Connection::Error::GoneExceptions
+        LambdaPunch.push { event_target.close }
         false
       end
 
@@ -38,18 +37,15 @@ module LambdaCable
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#transmit connection_id: #{connection_id} data: #{data.inspect}"
         client.post_to_connection data: data, connection_id: connection_id
         LambdaPunch.push { dynamodb.update }
-      rescue Aws::ApiGatewayManagementApi::Errors::GoneException,
-             Aws::ApiGatewayManagementApi::Errors::Http410Error => e
-        # TODO: Should we call close here?
-        # close
+      rescue *LambdaCable::Connection::Error::GoneExceptions
+        close
       end
 
       def close
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#close connection_id: #{connection_id}"
         LambdaPunch.push { dynamodb.close }
         client.delete_connection connection_id: connection_id
-      rescue Aws::ApiGatewayManagementApi::Errors::GoneException,
-             Aws::ApiGatewayManagementApi::Errors::Http410Error
+      rescue *LambdaCable::Connection::Error::GoneExceptions
       end
 
       def protocol
