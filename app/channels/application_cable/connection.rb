@@ -15,9 +15,6 @@ module ApplicationCable
 
     def session_user_name
       cookies.encrypted['_session']['user_name']
-    # TODO: Remove this later.
-    rescue
-      'Ken Collins'
     end
   end
 end
