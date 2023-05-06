@@ -1,4 +1,4 @@
-# Lamby WebSocket Demo
+# Rails & ActionCable WebSockets on Lambda
 
 <a href="https://lamby.custominktech.com"><img src="https://raw.githubusercontent.com/customink/lamby/master/images/social2.png" alt="Lamby: Simple Rails & AWS Lambda Integration using Rack." align="right" width="450" style="margin-left:1rem;margin-bottom:1rem;" /></a>
 
