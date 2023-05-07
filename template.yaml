@@ -51,13 +51,13 @@ Resources:
   WSConnectionsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      KeySchema:
-        - AttributeName: connection_id
-          KeyType: HASH
       AttributeDefinitions:
         - AttributeName: connection_id
           AttributeType: S
       BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: connection_id
+          KeyType: HASH
       TimeToLiveSpecification:
         AttributeName: ttl
         Enabled: true
@@ -65,20 +65,22 @@ Resources:
   WSSubscriptionsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      KeySchema:
-        - AttributeName: connection_id
-          KeyType: HASH
-        - AttributeName: channel_name
-          KeyType: RANGE
       AttributeDefinitions:
-        - AttributeName: connection_id
+        - AttributeName: identifier
           AttributeType: S
-        - AttributeName: channel_name
+        - AttributeName: connection_id
           AttributeType: S
       BillingMode: PAY_PER_REQUEST
-      TimeToLiveSpecification:
-        AttributeName: ttl
-        Enabled: true
+      GlobalSecondaryIndexes:
+        - IndexName: ConnectionIndex
+          KeySchema:
+            - AttributeName: connection_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      KeySchema:
+        - AttributeName: identifier
+          KeyType: HASH
 
   WSTableConnections:
     Type: AWS::Serverless::Connector

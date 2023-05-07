@@ -15,6 +15,7 @@
 - [ ] Should we set `worker_pool_size` from default 4 to something else?
 - [ ] Create gem. Dev & Runtime Deps.
 - [ ] How does a "server" subscribe to an internal channel so it can disconnect folks?
+- [ ] Test `ActionCable::Connection::Authorization::UnauthorizedError` does a clean close.
 
 ## Next Up?
 

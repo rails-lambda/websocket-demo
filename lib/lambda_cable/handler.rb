@@ -28,7 +28,7 @@ module LambdaCable
     end
 
     def default
-      connection.dispatch_lambda_message
+      connection.dispatch_lambda_message(websocket_message)
       { statusCode: 200 }
     end
 
@@ -43,6 +43,10 @@ module LambdaCable
 
     def connection
       @connection ||= LambdaCable::Connection::Base.restore_from event, context
+    end
+
+    def websocket_message
+      lambda_event['body']
     end
   end
 end

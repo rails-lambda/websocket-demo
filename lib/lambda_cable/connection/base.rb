@@ -41,34 +41,30 @@ module LambdaCable
         LambdaPunch.push { send method, *arguments }
       end
 
-      def dispatch_lambda_message
-        message = JSON.parse lambda_event['body']
-        case message['type']
-        when 'ping' then transmit ActionCable::INTERNAL[:message_types][:ping]
-        else
-          transmit identifier: message['identifier'], type: ActionCable::INTERNAL[:message_types][:confirmation]
-        end
-        # dispatch_websocket_message lambda_event['body']
-      end
-
-      # Override: Because we instantiate a connection on each event, here are the methods we
-      # can avoid invoking starting with the WebSocket driver's on(:message) handler.
-      #
+      # The main method for our Handler's default route key. Because we instantiate a 
+      # connection on each event, here are the methods we avoid calling within ActionCable
+      # starting with their WebSocket driver's on(:message) handler. Cool!
+      # 
       #   - ClientSocket#receive_message(data)
       #   - Connection#on_message(data)
       #   - Connection#message_buffer.append(message)
       #   - MessageBuffer#receive(message)
       #   - Connection#receive(websocket_message)
       #   - Connection#send_async(:dispatch_websocket_message, websocket_message)
-      #   - .... 
-      #
-      # TODO: Makes this tracer reach the end vs. temp hack.
+      # 
+      # If we get our JavaScript client side 1m ping we just response back and help keep 
+      # that connection alive from the server side. Primarily, it helps us keep DynamoDB 
+      # connection record's updated_at timestamp current.
+      # 
+      def dispatch_lambda_message(websocket_message)
+        message = decode(websocket_message)
+        return beat if message['type'] == 'ping'
+        # dispatch_websocket_message(websocket_message)
+        transmit identifier: message['identifier'], type: ActionCable::INTERNAL[:message_types][:confirmation]
+      end
+
+      # TODO: Will we run into alive? issues again?
       # def dispatch_websocket_message(websocket_message)
-      #   # super lambda_event['body']
-      #   # LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::Base#dispatch_websocket_message websocket_message: #{websocket_message.inspect}"
-      #   websocket_message = JSON.parse lambda_event['body']
-      #   transmit identifier: websocket_message['identifier'], type: ActionCable::INTERNAL[:message_types][:confirmation]
-      #   # LambdaPunch.push { ... }        
       # end
 
       private
