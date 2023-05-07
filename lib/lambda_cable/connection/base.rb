@@ -59,8 +59,8 @@ module LambdaCable
       def dispatch_lambda_message(websocket_message)
         message = decode(websocket_message)
         return beat if message['type'] == 'ping'
-        # dispatch_websocket_message(websocket_message)
-        transmit identifier: message['identifier'], type: ActionCable::INTERNAL[:message_types][:confirmation]
+        dispatch_websocket_message(websocket_message)
+        # transmit identifier: message['identifier'], type: ActionCable::INTERNAL[:message_types][:confirmation]
       end
 
       private

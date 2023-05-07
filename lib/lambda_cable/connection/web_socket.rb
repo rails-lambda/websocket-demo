@@ -26,8 +26,7 @@ module LambdaCable
 
       def alive?
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#alive? connection_id: #{connection_id}"
-        resp = client.get_connection connection_id: connection_id
-        resp.status_code == 200
+        client.get_connection connection_id: connection_id
       rescue *LambdaCable::Connection::Error::GoneExceptions
         LambdaPunch.push { event_target.close }
         false

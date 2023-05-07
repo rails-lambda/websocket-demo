@@ -8,6 +8,7 @@ module LambdaCable
       end
 
       def add(data)
+        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::Subscriptions#add data: #{data.inspect}"
         id_key = data["identifier"]
         id_options = ActiveSupport::JSON.decode(id_key).with_indifferent_access
         return if subscriptions.key?(id_key)
@@ -47,10 +48,9 @@ module LambdaCable
 
       attr_reader :subscriptions_db
 
-      def subscriptions
-        @subscriptions_from_db ||= subscriptions_db.find_all
-        
-      end
+      # def subscriptions
+      #   @subscriptions_from_db ||= subscriptions_db.find_all
+      # end
 
       # attr_reader :connection, :subscriptions
       # delegate :logger, to: :connection
