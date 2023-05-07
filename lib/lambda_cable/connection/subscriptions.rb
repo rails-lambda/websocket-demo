@@ -1,10 +1,11 @@
 module LambdaCable
   module Connection
-    module Subscriptions # :nodoc:
-      # def initialize(connection)
-      #   @connection = connection
-      #   @subscriptions = {}
-      # end
+    module Subscriptions
+
+      def initialize(connection)
+        super
+        @subscriptions_db = SubscriptionsDb.new(connection)
+      end
 
       def add(data)
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::Subscriptions#add data: #{data}"
@@ -44,6 +45,13 @@ module LambdaCable
       # end
 
       private
+
+      attr_reader :subscriptions_db
+
+      def subscriptions
+        @subscriptions_from_db ||= subscriptions_db.find_all
+        
+      end
 
       # attr_reader :connection, :subscriptions
       # delegate :logger, to: :connection

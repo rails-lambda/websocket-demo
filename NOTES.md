@@ -117,7 +117,7 @@ require 'aws-sdk-apigatewaymanagementapi'
 endpoint = "https://1o3hfab3i4.execute-api.us-east-1.amazonaws.com/cable"
 client = Aws::ApiGatewayManagementApi::Client.new region: 'us-east-1', endpoint: endpoint
 
-connection_id = "EgDrYfDioAMCEEw="
+connection_id = "EkdV7eHCoAMCFqQ="
 
 client.get_connection connection_id: connection_id
 client.post_to_connection data: JSON.dump({type: 'ping'}), connection_id: connection_id

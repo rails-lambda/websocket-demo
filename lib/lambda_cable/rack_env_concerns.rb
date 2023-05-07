@@ -5,6 +5,10 @@ module LambdaCable
   # 
   module RackEnvConcerns
     extend ActiveSupport::Concern
+
+    def connection_id
+      request_context['connectionId']
+    end
     
     private
 
@@ -21,10 +25,6 @@ module LambdaCable
         key = request_context['routeKey'].sub '$', ''
         ActiveSupport::StringInquirer.new(key)
       end
-    end
-
-    def connection_id
-      request_context['connectionId']
     end
 
     def request_context

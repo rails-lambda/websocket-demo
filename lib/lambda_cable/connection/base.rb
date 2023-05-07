@@ -5,8 +5,8 @@ module LambdaCable
       class << self
 
         # This creates a new ActionCable connection object for each $default request since Lambda does 
-        # not have long-running persisted connections & API Gateway events do not include identifing info
-        # such as request headers. We work around stateful connections by retrieving the needed connected 
+        # not have long-running persisted connections & API Gateway $default events do not include identifing
+        # info such as request headers. We work around stateful connections by retrieving the needed connected 
         # event properties from DynamoDB and merging them into the $default event. This simulates the 
         # behavior of a persisted connection object which may require session information.
         #
@@ -59,8 +59,8 @@ module LambdaCable
       def dispatch_lambda_message(websocket_message)
         message = decode(websocket_message)
         return beat if message['type'] == 'ping'
-        dispatch_websocket_message(websocket_message)
-        # transmit identifier: message['identifier'], type: ActionCable::INTERNAL[:message_types][:confirmation]
+        # dispatch_websocket_message(websocket_message)
+        transmit identifier: message['identifier'], type: ActionCable::INTERNAL[:message_types][:confirmation]
       end
 
       private

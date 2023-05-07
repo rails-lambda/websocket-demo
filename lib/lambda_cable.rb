@@ -34,4 +34,9 @@ module LambdaCable
   def self.logger
     @logger ||= LambdaCable::Logger.new.logger
   end
+
+  def self.dynamodb_client
+    @dynamodb_client ||= Aws::DynamoDB::Client.new region: ENV['AWS_REGION']
+  end
+
 end

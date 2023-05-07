@@ -11,14 +11,10 @@ module LambdaCable
       class << self
 
         def find(connection_id)
-          resp = client.get_item table_name: table_name, key: { connection_id: connection_id }
+          resp = LambdaCable.dynamodb_client.get_item table_name: table_name, key: { connection_id: connection_id }
           resp.item
         rescue Aws::DynamoDB::Errors::ResourceNotFoundException
           nil
-        end
-
-        def client
-          @client ||= Aws::DynamoDB::Client.new region: ENV['AWS_REGION']
         end
 
         def table_name
@@ -33,17 +29,17 @@ module LambdaCable
 
       def open
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Server::ConnectionsDb#open connection_id: #{connection_id}"
-        client.put_item table_name: table_name, item: item
+        LambdaCable.dynamodb_client.put_item table_name: table_name, item: item
       end
 
       def close
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Server::ConnectionsDb#close connection_id: #{connection_id}"
-        client.delete_item table_name: table_name, key: { connection_id: connection_id }
+        LambdaCable.dynamodb_client.delete_item table_name: table_name, key: { connection_id: connection_id }
       end
 
       def update
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Server::ConnectionsDb#update connection_id: #{connection_id}"
-        client.update_item table_name: table_name, key: { connection_id: connection_id }, 
+        LambdaCable.dynamodb_client.update_item table_name: table_name, key: { connection_id: connection_id }, 
           update_expression: "SET #UA = :ua, #API = :api, #TTL = :ttl",
           expression_attribute_values: { ":ua" => current_time_value, ":api" => apigw_endpoint, ":ttl" => ttl_value },
           expression_attribute_names: { "#UA" => "updated_at", "#API" => "apigw_endpoint", "#TTL" => "ttl" },
@@ -75,7 +71,7 @@ module LambdaCable
         lambda_event.slice(*CONNECTED_EVENT_PROPERTIES).to_json
       end
 
-      delegate :client, :table_name, to: :class
+      delegate :table_name, to: :class
     end
   end
 end
