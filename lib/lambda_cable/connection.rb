@@ -8,11 +8,14 @@ module LambdaCable
       autoload :InternalChannel
       autoload :MessageBuffer
       autoload :StreamEventLoop
+      autoload :Subscriptions
       autoload :WebSocket
     end
   end
 end
 
-ActionCable::Connection::Base.prepend LambdaCable::RackEnvConcerns
-ActionCable::Connection::Base.prepend LambdaCable::Connection::Base
-ActionCable::Connection::Base.prepend LambdaCable::Connection::InternalChannel
+base = ActionCable::Connection::Base
+base.prepend LambdaCable::RackEnvConcerns
+base.prepend LambdaCable::Connection::Base
+base.prepend LambdaCable::Connection::InternalChannel
+base.prepend LambdaCable::Connection::Subscriptions
