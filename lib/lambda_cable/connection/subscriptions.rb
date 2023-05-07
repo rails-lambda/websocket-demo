@@ -8,7 +8,6 @@ module LambdaCable
       end
 
       def add(data)
-        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::Subscriptions#add data: #{data}"
         id_key = data["identifier"]
         id_options = ActiveSupport::JSON.decode(id_key).with_indifferent_access
         return if subscriptions.key?(id_key)

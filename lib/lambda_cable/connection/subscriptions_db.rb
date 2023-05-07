@@ -7,13 +7,6 @@ module LambdaCable
 
       class << self
 
-        def find(identifier)
-          resp = LambdaCable.dynamodb_client.get_item table_name: table_name, key: { identifier: identifier }
-          resp.item
-        rescue Aws::DynamoDB::Errors::ResourceNotFoundException
-          nil
-        end
-
         def table_name
           ENV['LAMBDA_CABLE_SUBSCRIPTIONS_TABLE']
         end
@@ -31,11 +24,12 @@ module LambdaCable
 
 
       def find_all
-        resp = LambdaCable.dynamodb_client.query 
+        resp = LambdaCable.dynamodb_client.query( 
           table_name: table_name, 
           index_name: 'connection_id_index',
           key_condition_expression: "connection_id = :connection_id", 
           expression_attribute_values: { ":connection_id" => connection_id }
+        )
         resp.items
       rescue Aws::DynamoDB::Errors::ResourceNotFoundException
         []
@@ -62,3 +56,10 @@ module LambdaCable
     end
   end
 end
+
+# def find(identifier)
+#   resp = LambdaCable.dynamodb_client.get_item table_name: table_name, key: { identifier: identifier }
+#   resp.item
+# rescue Aws::DynamoDB::Errors::ResourceNotFoundException
+#   nil
+# end
