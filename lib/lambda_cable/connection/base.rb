@@ -41,6 +41,15 @@ module LambdaCable
         LambdaPunch.push { send method, *arguments }
       end
 
+      # We want the Connections#remove_connection to close the WebSocket connection directly
+      # as a byproduct of the Connection#handle_close method which is called via the $disconnect
+      # handler event. So no need for a fancy Connection#close which is typical for a server
+      # shutdown which also involves a reconnect.
+      #
+      def websocket_close
+        websocket.close
+      end
+
       # The main method for our Handler's default route key. Because we instantiate a 
       # connection on each event, here are the methods we avoid calling within ActionCable
       # starting with their WebSocket driver's on(:message) handler. Cool!

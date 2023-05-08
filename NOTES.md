@@ -9,12 +9,15 @@
 - [ ] Do we need `channel_prefix` in any way? DynamoDB optimization maybe?
 - [x] Where does `Sec-WebSocket-Protocol: actioncable-v1-json` come in?
 - [ ] Will this work? `ActionCable.server.remote_connections.where(current_user: User.find(1)).disconnect`
+  - [ ] We would have to find a way to get the API GW connection_id from a user?
+  - [ ] Hook this up to logout. https://stackoverflow.com/questions/40495351/how-to-close-connection-in-action-cable
 - [ ] Make standalone API Gateway URLs work besides assuming /cable.
 - [x] Should `connection_class` be custom vs. `ActionCable::Connection::Base`?
 - [ ] Should we set `worker_pool_size` from default 4 to something else?
 - [ ] Create gem. Dev & Runtime Deps.
 - [ ] How does a "server" subscribe to an internal channel so it can disconnect folks?
 - [ ] Test `ActionCable::Connection::Authorization::UnauthorizedError` does a clean close.
+- [ ] Dig into logout. Do unsubscribes work? Is $disconnect called? Many times? 
 
 ## Next Up?
 
@@ -164,6 +167,13 @@ end
 ```
 
 When you do not have a constant CONNECTION, you must store state somewhere else. We use DynamoDB for this. Specifically, call out the session for identified by.
+
+Since there are no "servers" there are no collection of instances holding on "connections" for clients. This means that `ActionCable::Server::Connections` module is mostly moot along with its `#connections` and add/remove connection methods. There is only one server holding on to all connections and that is API Gateway. We decided not to synthesize this behavior in LambdaCable. There is no give me all connections for API Gateway in whole (like `#remote_connections`) or per workload. Only the work at hand for any given event-based transaction. 
+
+- Make some diagram having 3 servers, each having 20, 30, and 15 connections, to one API Gateway.
+- Expand or illustrate how disconnecting a user would look like.
+- No server shutdown work to do. No connections to close.
+- No need for "internal" channels.
 
 ### Adding CloudFront Distribution
 

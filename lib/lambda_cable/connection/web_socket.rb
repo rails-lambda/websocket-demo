@@ -66,10 +66,7 @@ module LambdaCable
       end
 
       def client
-        @client ||= begin
-          LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#client apigw_endpoint: #{apigw_endpoint}"
-          Aws::ApiGatewayManagementApi::Client.new region: ENV['AWS_REGION'], endpoint: apigw_endpoint
-        end
+        @client ||= Aws::ApiGatewayManagementApi::Client.new region: ENV['AWS_REGION'], endpoint: apigw_endpoint
       end
 
       def rack_response_headers

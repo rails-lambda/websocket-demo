@@ -5,6 +5,8 @@ module LambdaCable
         @connection = connection
       end
 
+      # Interface: Hook into LambdaPunch as our buffer.
+      # 
       def append(message)
         if message.is_a?(String)
           LambdaPunch.push { connection.receive message }
@@ -13,8 +15,10 @@ module LambdaCable
         end
       end
 
-      # NOP since LambdaPunch will handle this for us automatically.
+      # Interface: NOP since LambdaPunch will handle this for us automatically.
+      # 
       def process!
+        LambdaCable.logger.debug "[DEBUG] [NOP] LambdaCable::Connection::MessageBuffer#process!"
       end
     end
   end
