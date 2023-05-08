@@ -10,7 +10,7 @@
 - [x] Where does `Sec-WebSocket-Protocol: actioncable-v1-json` come in?
 - [ ] Will this work? `ActionCable.server.remote_connections.where(current_user: User.find(1)).disconnect`
   - [ ] We would have to find a way to get the API GW connection_id from a user?
-  - [ ] Hook this up to logout. https://stackoverflow.com/questions/40495351/how-to-close-connection-in-action-cable
+  - [ ] Hook this up to logout. https://stackoverflow.com/questions/40495351/how-to-close-connection-in-action-cable 
 - [ ] Make standalone API Gateway URLs work besides assuming /cable.
 - [x] Should `connection_class` be custom vs. `ActionCable::Connection::Base`?
 - [ ] Should we set `worker_pool_size` from default 4 to something else?
