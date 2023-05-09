@@ -17,7 +17,7 @@ module LambdaCable
 
       def initialize(event, context, event_target)
         @event, @context, @event_target = event, context, event_target
-        @dynamodb = LambdaCable::Server::ConnectionsDb.new(event, context)
+        @dynamodb = LambdaCable::Server::ConnectionsDb.new(event, context, event_target)
       end
 
       def possible?
@@ -60,9 +60,14 @@ module LambdaCable
 
       attr_reader :event, :context, :event_target, :dynamodb
 
+      # This methos has intentional coordination. We know the Connection#on_open will call #send_async
+      # with the #handle_open method. This in turn will call your connection's #connect method if defined.
+      # Since #send_async is handled by LambdaPunch, we want DynamoDB to open after the #connect in case
+      # any identifiers are present for the connection_identifier.
+      # 
       def open
-        dynamodb.open
         event_target.on_open
+        LambdaPunch.push { dynamodb.open }
       end
 
       def client

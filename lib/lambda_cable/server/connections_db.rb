@@ -23,12 +23,12 @@ module LambdaCable
 
       end
 
-      def initialize(event, context)
-        @event, @context = event, context
+      def initialize(event, context, connection)
+        @event, @context, @connection = event, context, connection
       end
 
       def open
-        LambdaCable.logger.debug "[DEBUG] LambdaCable::Server::ConnectionsDb#open connection_id: #{connection_id}"
+        LambdaCable.logger.debug "[DEBUG] LambdaCable::Server::ConnectionsDb#open connection_id: #{connection_id}, connection_identifier: #{connection_identifier}"
         LambdaCable.dynamodb_client.put_item table_name: table_name, item: item
       end
 
@@ -48,10 +48,11 @@ module LambdaCable
 
       private
 
-      attr_reader :event, :context
+      attr_reader :event, :context, :connection
 
       def item
         { connection_id: connection_id,
+          connection_identifier: connection_identifier,
           updated_at: current_time_value,
           apigw_endpoint: apigw_endpoint,
           connected_event: connected_event,
@@ -71,7 +72,12 @@ module LambdaCable
         lambda_event.slice(*CONNECTED_EVENT_PROPERTIES).to_json
       end
 
+      def connection_identifier
+        connection.connection_identifier || connection_id
+      end
+
       delegate :table_name, to: :class
+      
     end
   end
 end

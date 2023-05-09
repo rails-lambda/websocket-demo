@@ -17,7 +17,13 @@
 - [ ] Create gem. Dev & Runtime Deps.
 - [ ] How does a "server" subscribe to an internal channel so it can disconnect folks?
 - [ ] Test `ActionCable::Connection::Authorization::UnauthorizedError` does a clean close.
-- [ ] Dig into logout. Do unsubscribes work? Is $disconnect called? Many times? 
+- [x] Dig into logout. Do unsubscribes work? Is $disconnect called? Many times? 
+- [ ] Do some sort of DynamoDB stream for Connection -> Delete -> Subscriptions cleanup.
+- [ ] Make sure `restore_from` calls `connect` if respond to.
+  - [ ] Document this behavior along with `disconnect` callback.
+  - [ ] Warn to not keep state here since? Maybe we should call connect each time? No, neither are good.
+- [x] Wire up `disconnect` for Channel.
+- [ ] Make sure deploys do disconnects. How? Then document it.
 
 ## Next Up?
 

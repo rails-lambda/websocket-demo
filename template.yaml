@@ -23,8 +23,8 @@ Globals:
       Variables:
         RAILS_ENV: !Ref RailsEnv
         DATABASE_URL: x-crypteia-ssm:/websocket-demo/env/DATABASE_URL
-        LAMBDA_CABLE_CONNECTIONS_TABLE: !Ref WSConnectionsTable
-        LAMBDA_CABLE_SUBSCRIPTIONS_TABLE: !Ref WSSubscriptionsTable
+        LAMBDA_CABLE_CONNECTIONS_TABLE: !Ref WSTableConnections
+        LAMBDA_CABLE_SUBSCRIPTIONS_TABLE: !Ref WSTableSubscriptions
         LAMBDA_CABLE_LOG_LEVEL: debug
     Timeout: 30
 
@@ -48,13 +48,22 @@ Resources:
             Resource:
               - !Sub arn:aws:ssm:*:${AWS::AccountId}:parameter/websocket-demo/env/*
 
-  WSConnectionsTable:
+  WSTableConnections:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
         - AttributeName: connection_id
           AttributeType: S
+        - AttributeName: connection_identifier
+          AttributeType: S
       BillingMode: PAY_PER_REQUEST
+      GlobalSecondaryIndexes:
+        - IndexName: connection_identifier_index
+          KeySchema:
+            - AttributeName: connection_identifier
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
       KeySchema:
         - AttributeName: connection_id
           KeyType: HASH
@@ -62,7 +71,7 @@ Resources:
         AttributeName: ttl
         Enabled: true
 
-  WSSubscriptionsTable:
+  WSTableSubscriptions:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
@@ -82,13 +91,13 @@ Resources:
         - AttributeName: identifier
           KeyType: HASH
 
-  WSTableConnections:
+  WSConnector:
     Type: AWS::Serverless::Connector
     Properties:
       Source: { Id: RailsLambda }
       Destination:
-        - Id: WSConnectionsTable
-        - Id: WSSubscriptionsTable
+        - Id: WSTableConnections
+        - Id: WSTableSubscriptions
       Permissions: [Read, Write]
   
   WSApi:
