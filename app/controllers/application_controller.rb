@@ -12,6 +12,7 @@ class ApplicationController < ActionController::Base
   end
 
   def logout
+    # current_connection.disconnect
     session.clear
     redirect_to root_url
   end
@@ -20,6 +21,10 @@ class ApplicationController < ActionController::Base
 
   def current_user
     User.find(current_user_name) if current_user_name
+  end
+
+  def current_connection
+    ActionCable.server.remote_connections.where current_user: current_user
   end
 
   def current_user_name

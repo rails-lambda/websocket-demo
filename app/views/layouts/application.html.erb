@@ -33,7 +33,7 @@
           <% if current_user %>
             <li class="nav-item">
               <%= button_to '👋 Logout', logout_path, method: :delete, class: 'nav-link',
-                  data: { turbo_method: :delete, turbo_frame: '_top' } %>
+                  data: { controller: 'user', action: 'click->user#logout', turbo_method: :delete, turbo_frame: '_top' } %>
             </li>
           <% end %>
         </ul>

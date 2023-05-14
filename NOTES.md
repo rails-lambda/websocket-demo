@@ -1,4 +1,11 @@
 
+## Features
+
+- [ ] Add username to chat window messages.
+- [ ] Show total connected users in some top area.
+  - [ ] https://www.youtube.com/watch?v=OcWdFSg11T8
+- [ ] ...
+
 ## Questions/Followups
 
 - [ ] Set SECRET_KEY_BASE in SSM.
@@ -8,9 +15,9 @@
 - [ ] Does any of the ActionCable uses ActiveJob for background processing?
 - [ ] Do we need `channel_prefix` in any way? DynamoDB optimization maybe?
 - [x] Where does `Sec-WebSocket-Protocol: actioncable-v1-json` come in?
-- [ ] Will this work? `ActionCable.server.remote_connections.where(current_user: User.find(1)).disconnect`
-  - [ ] We would have to find a way to get the API GW connection_id from a user?
-  - [ ] Hook this up to logout. https://stackoverflow.com/questions/40495351/how-to-close-connection-in-action-cable 
+- [x] Will this work? `ActionCable.server.remote_connections.where(current_user: User.find(1)).disconnect`
+  - [x] We would have to find a way to get the API GW connection_id from a user?
+  - [x] Hook this up to logout. https://stackoverflow.com/questions/40495351/how-to-close-connection-in-action-cable 
 - [ ] Make standalone API Gateway URLs work besides assuming /cable.
 - [x] Should `connection_class` be custom vs. `ActionCable::Connection::Base`?
 - [ ] Should we set `worker_pool_size` from default 4 to something else?
@@ -22,6 +29,8 @@
 - [x] Make sure `restore_from` calls `connect` if respond to. Nope, see docs.
 - [x] Wire up `disconnect` for Channel.
 - [ ] Make sure deploys do disconnects. How? Then document it.
+- [ ] How is JavaScript only loaded when LambdaCable is used?
+- [ ] Hook up all `ActiveSupport::Notifications` to CloudWatch Embedded Metrics?
 
 ## Next Up?
 
