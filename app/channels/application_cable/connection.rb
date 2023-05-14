@@ -3,8 +3,11 @@ module ApplicationCable
     identified_by :current_user
 
     def connect
-      reject_unauthorized_connection unless session_user
-      self.current_user = session_user
+      reject_unauthorized_connection unless current_user
+    end
+
+    def current_user
+      @current_user ||= session_user
     end
 
     private

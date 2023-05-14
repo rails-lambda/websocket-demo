@@ -19,9 +19,7 @@
 - [ ] Test `ActionCable::Connection::Authorization::UnauthorizedError` does a clean close.
 - [x] Dig into logout. Do unsubscribes work? Is $disconnect called? Many times? 
 - [ ] Do some sort of DynamoDB stream for Connection -> Delete -> Subscriptions cleanup.
-- [ ] Make sure `restore_from` calls `connect` if respond to.
-  - [ ] Document this behavior along with `disconnect` callback.
-  - [ ] Warn to not keep state here since? Maybe we should call connect each time? No, neither are good.
+- [x] Make sure `restore_from` calls `connect` if respond to. Nope, see docs.
 - [x] Wire up `disconnect` for Channel.
 - [ ] Make sure deploys do disconnects. How? Then document it.
 
@@ -138,6 +136,23 @@ client.post_to_connection data: JSON.dump({type: 'ping'}), connection_id: connec
 [ ] Add lambda_cable gem to your production group.
 [ ] Install LambdaPunch
 [ ] Adding CloudFront Distribution
+[ ] Talk about arch of the `restore_from` method and how `connect` is one time. Ex: Make current_user a lazy read vs setting a property. This does work with `identified_by`.
+
+```ruby
+identified_by :current_user
+def connect
+  reject_unauthorized_connection unless session_user
+  self.current_user = session_user
+end
+# vs...
+identified_by :current_user
+def connect
+  reject_unauthorized_connection unless current_user
+end
+def current_user
+  @current_user ||= session_user
+end
+```
 
 ### Architecture Reports
 
