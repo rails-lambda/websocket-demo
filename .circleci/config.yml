@@ -32,7 +32,9 @@ commands:
       - attach_workspace:
           at: .
       - run: |
-          [ -f aws.env ] && cat aws.env >> "$BASH_ENV" && rm aws.env
+          if [ -f aws.env ]; then
+            cat aws.env >> "$BASH_ENV"
+          fi
       - run: >
           devcontainer exec 
           --workspace-folder . 
@@ -50,7 +52,7 @@ jobs:
     executor: aws-cli/default
     steps:
       - aws-cli/setup:
-          role-arn: 'arn:aws:iam::589405201853:role/websocket-demo-oidc-CircleCIRole-RD3F9IY5KQHZ'
+          role-arn: $OIDC_ROLE_ARN
           role-session-name: circleci
           session-duration: '900'
       - run:
@@ -62,14 +64,14 @@ jobs:
       - persist_to_workspace:
           root: .
           paths: [ aws.env ]
-  # test-job:
-  #   <<: *default-machine
-  #   steps:
-  #     - checkout
-  #     - devcontainer-install
-  #     - devcontainer-up
-  #     - devcontainer-run: { cmd: ./bin/setup }
-  #     - devcontainer-run: { cmd: ./bin/test }
+  test-job:
+    <<: *default-machine
+    steps:
+      - checkout
+      - devcontainer-install
+      - devcontainer-up
+      - devcontainer-run: { cmd: ./bin/setup }
+      - devcontainer-run: { cmd: ./bin/test }
   deploy-job:
     <<: *default-machine
     steps:
@@ -86,16 +88,19 @@ jobs:
           cmd: |
             ./bin/deploy
 workflows:
-  # test:
-  #   # when: { equal: [ test, << pipeline.parameters.workflow >> ] }
-  #   jobs:
-  #     - devcontainer
-  #     - test-job:
-  #         requires: [devcontainer]
+  test:
+    when: { equal: [ test, << pipeline.parameters.workflow >> ] }
+    jobs:
+      - devcontainer
+      - test-job:
+          requires: [devcontainer]
   deploy:
     # when: { equal: [ deploy, << pipeline.parameters.workflow >> ] }
     jobs:
       - devcontainer
-      - aws-oidc: { requires: [devcontainer] }          
-      - deploy-job: { requires: [aws-oidc] }
+      - aws-oidc:
+          context: org-global
+          requires: [devcontainer]
+      - deploy-job:
+          requires: [aws-oidc]
 
