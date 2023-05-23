@@ -33,7 +33,6 @@ module LambdaCable
     end
 
     def disconnect
-      puts "HELP: connection.current_user: #{connection.current_user.inspect}"
       connection.send_async :handle_close
       { statusCode: 200 }
     end

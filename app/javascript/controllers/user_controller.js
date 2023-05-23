@@ -3,7 +3,7 @@ import { cable } from "@hotwired/turbo-rails";
 
 export default class extends Controller {
   async logout() {
-    const consumer = await cable.getConsumer();
-    consumer.disconnect();
+    // const consumer = await cable.getConsumer();
+    // consumer.disconnect();
   }
 }

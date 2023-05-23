@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   end
 
   def logout
-    # current_connection.disconnect
+    current_connection.disconnect
     session.clear
     redirect_to root_url
   end
