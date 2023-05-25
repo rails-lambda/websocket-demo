@@ -22,7 +22,6 @@ module LambdaCable
         LambdaCable.dynamodb_client.put_item table_name: table_name, item: item
       end
 
-
       def find_all
         resp = LambdaCable.dynamodb_client.query( 
           table_name: table_name, 

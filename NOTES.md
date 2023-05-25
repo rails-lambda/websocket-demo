@@ -49,17 +49,16 @@
 Internal Channel:
 
 ```json
-[DEBUG] SubscriptionAdapter#subscribe to 
+Connection::InternalChannel#subscribe_to_internal_channel
+pubsub.subscribe(internal_channel, callback)
 "websocket-demo:action_cable/Z2lkOi8vbGFtYnktd3MvVXNlci9Qcm9mLitBYmUrRWJlcnQ"
 ```
 
 First Subscribe:
 
 ```json
-WebSocket Connection Established
-{"type":"welcome"}
+LambdaCable::Connection::Subscriptions#add
 {"command":"subscribe","identifier":"{\"channel\":\"Turbo::StreamsChannel\",\"signed_stream_name\":\"IloybGtPaTh2YkdGdFlua3RkM012VW05dmJTOHgi--38562feb9cd334e9de85098412c02e4693fc606663ce97cd6a56c7e3162821a1\"}"}
-{"identifier":"{\"channel\":\"Turbo::StreamsChannel\",\"signed_stream_name\":\"IloybGtPaTh2YkdGdFlua3RkM012VW05dmJTOHgi--38562feb9cd334e9de85098412c02e4693fc606663ce97cd6a56c7e3162821a1\"}","type":"confirm_subscription"}
 ```
 
 ## Installs

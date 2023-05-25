@@ -61,9 +61,9 @@ module LambdaCable
       #   - Connection#receive(websocket_message)
       #   - Connection#send_async(:dispatch_websocket_message, websocket_message)
       # 
-      # If we get our JavaScript client side 1m ping we just response back and help keep 
-      # that connection alive from the server side. Primarily, it helps us keep DynamoDB 
-      # connection record's updated_at timestamp current.
+      # If we get our JavaScript client-side 1 minute ping message type, we just respond 
+      # back and help keep that connection alive from the server-side. Primarily, it helps 
+      # us keep DynamoDB connection table item's updated_at timestamp current.
       # 
       def dispatch_lambda_message(websocket_message)
         message = decode(websocket_message)
