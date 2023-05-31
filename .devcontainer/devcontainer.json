@@ -13,6 +13,7 @@
     "ghcr.io/devcontainers/features/docker-in-docker:latest": {},
     "ghcr.io/devcontainers/features/sshd:latest": {}
   },
+  "forwardPorts": [3000],
   "remoteUser": "vscode",
   "remoteEnv": {
     "COMPOSE_HTTP_TIMEOUT": "300"

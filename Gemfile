@@ -10,7 +10,7 @@ gem "aws-sdk-dynamodb"
 gem "bootstrap_form"
 gem "faker"
 gem "importmap-rails"
-gem "lamby"
+gem "lamby", github: 'rails-lambda/lamby', branch: 'ProxyServer'
 gem "mysql2", "~> 0.5"
 gem "sprockets-rails"
 gem "stimulus-rails"
@@ -20,6 +20,7 @@ gem "jbuilder"
 group :development, :test do
   gem "debug"
   gem "puma"
+  gem "webrick"
 end
 
 group :development do
