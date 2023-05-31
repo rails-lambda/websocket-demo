@@ -32,8 +32,14 @@
 
 # Lamby
 /.aws-sam
+/.localdev/.aws-sam
+/.localdev/src/vendor/bundle
 .env.*
 !.env.development
 !.env.test
 /vendor/bundle
 .ruby-version
+
+# Environments
+/.devcontainer/.env
+/.env.development.local
