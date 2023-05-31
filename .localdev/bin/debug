@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+IMAGE_ID=$(docker images --format '{{.ID}}' railslambda:web)
+
+docker run \
+  --env AWS_LAMBDA_FUNCTION_VERSION=\$LATEST \
+  --env AWS_LAMBDA_RUNTIME_API=127.0.0.1:9001 \
+  --env AWS_EXECUTION_ENV=AWS_Lambda_Image \
+  --env AWS_LAMBDA_FUNCTION_NAME=websocket-demo-live-RailsLambda-VoCbcc7PliXi \
+  --env AWS_LAMBDA_FUNCTION_MEMORY_SIZE=1792 \
+  --env AWS_DEFAULT_REGION=us-east-1 \
+  --env AWS_REGION=us-east-1 \
+  --env AWS_LAMBDA_INITIALIZATION_TYPE=on-demand \
+  --env _HANDLER=app.lambdaHandler \
+  --env TS_KEY=$TS_KEY \
+  --env TS_REMOTE_PROXY_HOST=metadev.beaver-carp.ts.net \
+  --env TS_REMOTE_PROXY_PORT=3000 \
+  --interactive \
+  --tty \
+  --rm \
+  --privileged \
+  --user \
+  root \
+  --entrypoint "/bin/bash" \
+  $IMAGE_ID

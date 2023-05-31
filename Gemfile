@@ -20,6 +20,7 @@ gem "jbuilder"
 group :development, :test do
   gem "debug"
   gem "puma"
+  gem "webrick"
 end
 
 group :development do

@@ -1,0 +1,177 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Rails WebSockets on Lambda (Local Development)
+
+Parameters:
+
+  TsKey:
+    Type: String
+
+Globals:
+
+  Function:
+    Architectures:
+      - arm64
+    Environment:
+      Variables:
+        TS_KEY: !Ref TsKey
+        TS_HOSTNAME: websocket-demo
+        TS_REMOTE_PROXY_HOST: 100.74.85.117
+        TS_REMOTE_PROXY_PORT: 3000
+        LAMBDA_CABLE_CONNECTIONS_TABLE: !Ref WSTableConnections
+        LAMBDA_CABLE_SUBSCRIPTIONS_TABLE: !Ref WSTableSubscriptions
+    Timeout: 30
+
+Resources:
+
+  RailsLambda:
+    Type: AWS::Serverless::Function
+    Metadata:
+      DockerContext: '.'
+      Dockerfile: Dockerfile
+      DockerTag: web
+    Properties:
+      FunctionUrlConfig:
+        AuthType: NONE
+      MemorySize: 3008
+      PackageType: Image
+
+  WSTableConnections:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: connection_id
+          AttributeType: S
+        - AttributeName: connection_identifier
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      GlobalSecondaryIndexes:
+        - IndexName: connection_identifier_index
+          KeySchema:
+            - AttributeName: connection_identifier
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      KeySchema:
+        - AttributeName: connection_id
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+  WSTableSubscriptions:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: identifier
+          AttributeType: S
+        - AttributeName: connection_id
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      GlobalSecondaryIndexes:
+        - IndexName: connection_id_index
+          KeySchema:
+            - AttributeName: connection_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      KeySchema:
+        - AttributeName: identifier
+          KeyType: HASH
+
+  WSConnector:
+    Type: AWS::Serverless::Connector
+    Properties:
+      Source: { Id: RailsLambda }
+      Destination:
+        - Id: WSTableConnections
+        - Id: WSTableSubscriptions
+      Permissions: [Read, Write]
+  
+  WSApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Ref RailsLambda
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: "$request.body.message"
+
+  WSDeployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+      - WSConnectRoute
+      - WSDefaultRoute
+      - WSDisconnectRoute
+    Properties:
+      ApiId: !Ref WSApi
+
+  WSStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: cable
+      DeploymentId: !Ref WSDeployment
+      ApiId: !Ref WSApi
+
+  WSPolicy:
+    Type: AWS::IAM::Policy
+    DependsOn: RailsLambdaRole
+    Properties:
+      PolicyName: !Sub "${RailsLambda}-ws-policy"
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: ["execute-api:Invoke", "execute-api:ManageConnections"]
+            Resource: 
+              - !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WSApi}/*
+      Roles:
+        - !Ref RailsLambdaRole
+
+  WSConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WSApi
+      AuthorizationType: NONE
+      RouteKey: "$connect"
+      OperationName: WSConnectRoute
+      Target: !Sub integrations/${WSIntegration}
+
+  WSDefaultRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WSApi
+      AuthorizationType: NONE
+      RouteKey: "$default"
+      OperationName: WSDefaultRoute
+      Target: !Sub integrations/${WSIntegration}
+
+  WSDisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WSApi
+      AuthorizationType: NONE
+      RouteKey: "$disconnect"
+      OperationName: WSDisconnectRoute
+      Target: !Sub integrations/${WSIntegration}
+
+  WSIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WSApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RailsLambda.Arn}/invocations
+
+  WSPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Sub "${RailsLambda}"
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WSApi}/*
+
+Outputs:
+
+  WsLocalLambdaUrl:
+    Value: !GetAtt RailsLambdaUrl.FunctionUrl
+  WsLocalConnectionsTableName:
+    Value: !Ref WSTableConnections
+  WsLocalSubscriptionsTableName:
+    Value: !Ref WSTableSubscriptions

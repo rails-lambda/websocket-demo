@@ -1,0 +1,13 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    socksify (1.7.1)
+
+PLATFORMS
+  aarch64-linux
+
+DEPENDENCIES
+  socksify
+
+BUNDLED WITH
+   2.4.10
