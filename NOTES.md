@@ -227,14 +227,14 @@ Now follow the guides on our [Simple CloudFront Distribution](https://lamby.clou
 
 - Click "Origins" tab
 - Click "Create origin" button
-- Origin domain: Ex: 3iku9itbbb.execute-api.us-east-1.amazonaws.com (⚠️ Use proper region)
+- Origin domain: Ex: 3iku9itbbb.execute-api.us-east-1.amazonaws.com (⚠️ Use proper region. No wss://)
 - Protocol: HTTPS only
   Minimum origin SSL protocol: TLSv1
 - Origin path: (none)
 - Add Custom Header: X-Forwarded-Host myapp.example.com
-- Name: furl (up to you)
+- Name: apigw (up to you)
 
-Now, return to your specific CloudFront distribution so we can setup your `/cable` behavior.
+Now, we can create teh `/cable` behavior to use this new origin.
 
 - Click "Behaviors" tab
 - Click "Create behavior" 
