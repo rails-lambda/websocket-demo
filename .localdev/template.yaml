@@ -15,7 +15,7 @@ Globals:
     Environment:
       Variables:
         TS_KEY: !Ref TsKey
-        TS_HOSTNAME: websocket-demo
+        TS_HOSTNAME: websockets-live
         TS_REMOTE_PROXY_HOST: 100.74.85.117
         TS_REMOTE_PROXY_PORT: 3000
         LAMBDA_CABLE_CONNECTIONS_TABLE: !Ref WSTableConnections

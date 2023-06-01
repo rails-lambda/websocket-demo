@@ -68,11 +68,26 @@ Rails.application.configure do
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
 
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
+  # Make development like production.
+  if ENV['LAMBDA_CABLE_LOCAL_PROXY']
+    require 'lambda_cable'
+    require 'lambda_punch'
+    # Simulate production RAILS_LOG_TO_STDOUT.
     logger           = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
+    # Force local development Rails behavior.
+    config.host_authorization = { exclude: ->(_) { true } }
+    config.hosts += [IPAddr.new("0.0.0.0/0"), IPAddr.new("::/0")]
+    # Use cloud resources.
+    ENV['LAMBDA_CABLE_LOG_LEVEL'] = "debug"
+    ENV['LAMBDA_CABLE_CONNECTIONS_TABLE'] = "websocket-demo-live-WSTableConnections-NNRTHMFOPZSX"
+    ENV['LAMBDA_CABLE_SUBSCRIPTIONS_TABLE'] = "websocket-demo-live-WSTableSubscriptions-11BPGHNABCQ6Z"
+    # ActionCable & LambdaPunch.
+    config.action_cable.allowed_request_origins = ['https://websockets-live.lamby.cloud']
+    config.to_prepare { 
+      LambdaPunch.start_server!
+      ActionCable::Server::Base.config.cable = {'adapter' => 'lambda_cable'}
+    }
   end
-  config.host_authorization = { exclude: ->(_) { true } }
-  config.hosts += [IPAddr.new("0.0.0.0/0"), IPAddr.new("::/0")]
 end

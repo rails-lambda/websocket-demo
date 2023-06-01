@@ -1,8 +1,4 @@
 #!/bin/sh
 set -e
 
-LAMBDA_CABLE_LOG_LEVEL=debug \
-  LAMBDA_CABLE_CONNECTIONS_TABLE=websocket-demo-live-WSTableConnections-NNRTHMFOPZSX \
-  LAMBDA_CABLE_SUBSCRIPTIONS_TABLE=websocket-demo-live-WSTableSubscriptions-11BPGHNABCQ6Z \
-  RAILS_LOG_TO_STDOUT=1 \
-  bundle exec rake lamby:proxy_server
+LAMBDA_CABLE_LOCAL_PROXY=1 bundle exec rake lamby:proxy_server

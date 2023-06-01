@@ -119,6 +119,11 @@ config.session_store :cookie_store, expire_after: 1.day, key: '_session'
 ## Testing Connection Timeout
 
 ```shell
+wscat --connect wss://websockets-live.lamby.cloud/cable \
+      --origin "https://websockets-live.lamby.cloud" \
+      --header "Sec-WebSocket-Protocol:actioncable-v1-json" \
+      --protocol "13"
+
 wscat --connect wss://websockets.lamby.cloud/cable \
       --origin "https://websockets.lamby.cloud" \
       --header "Sec-WebSocket-Protocol:actioncable-v1-json" \
@@ -229,7 +234,7 @@ Now follow the guides on our [Simple CloudFront Distribution](https://lamby.clou
 - Click "Create origin" button
 - Origin domain: Ex: 3iku9itbbb.execute-api.us-east-1.amazonaws.com (⚠️ Use proper region. No wss://)
 - Protocol: HTTPS only
-  Minimum origin SSL protocol: TLSv1
+  Minimum origin SSL protocol: TLSv1 (⚠️ v1.2 will NOT work)
 - Origin path: (none)
 - Add Custom Header: X-Forwarded-Host myapp.example.com
 - Name: apigw (up to you)
