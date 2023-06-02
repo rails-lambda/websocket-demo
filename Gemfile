@@ -19,7 +19,10 @@ gem "jbuilder"
 
 group :development, :test do
   gem "debug"
+  gem "pry"
   gem "puma"
+  gem "sucker_punch", require: false
+  gem "webrick"
 end
 
 group :development do

@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+
+LAMBDA_CABLE_LOCAL_PROXY=1 bundle exec rake lamby:proxy_server

@@ -6,6 +6,8 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+Rails.backtrace_cleaner.remove_silencers!
+
 module WebsocketDemo
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
@@ -17,7 +19,7 @@ module WebsocketDemo
     # in config/environments, which are processed later.
     #
     # config.time_zone = "Central Time (US & Canada)"
-    # config.eager_load_paths << Rails.root.join("extras")
+    config.eager_load_paths << Rails.root.join("lib")
 
     # WebsocketDemo
     # -------

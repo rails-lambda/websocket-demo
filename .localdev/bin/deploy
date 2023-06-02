@@ -1,0 +1,45 @@
+#!/bin/sh
+set -e
+
+AWS_REGION=us-east-1
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+IMAGE_REPOSITORY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/websocket-demo-live"
+
+if [ -z "$TS_KEY" ]; then
+  echo "TS_KEY environment variable not set. Exiting."
+  exit 1
+fi
+
+echo '== Create ECR Repo if needed. =='
+aws ecr describe-repositories \
+  --repository-names "websocket-demo-live" \
+  --region "$AWS_REGION" > /dev/null || \
+aws ecr create-repository \
+  --repository-name "websocket-demo-live" \
+  --image-tag-mutability "MUTABLE" \
+  --image-scanning-configuration "scanOnPush=true" \
+  --region "$AWS_REGION" > /dev/null || true
+
+echo "== SAM build =="
+sam build \
+  --build-dir ./.localdev/.aws-sam/build \
+  --template ./.localdev/template.yaml \
+  --parameter-overrides \
+    TsKey="${TS_KEY}"
+
+echo "== SAM package =="
+sam package \
+  --region "$AWS_REGION" \
+  --template-file ./.localdev/.aws-sam/build/template.yaml \
+  --output-template-file ./.localdev/.aws-sam/build/packaged.yaml \
+  --image-repository "$IMAGE_REPOSITORY"
+
+echo "== SAM deploy =="
+sam deploy \
+  --region "$AWS_REGION" \
+  --template-file ./.localdev/.aws-sam/build/packaged.yaml \
+  --stack-name "websocket-demo-live" \
+  --image-repository "$IMAGE_REPOSITORY" \
+  --capabilities "CAPABILITY_IAM" \
+  --parameter-overrides \
+    TsKey="${TS_KEY}"

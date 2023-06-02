@@ -67,4 +67,41 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
+
+  # Make development like production.
+  if ENV['LAMBDA_CABLE_LOCAL_PROXY']
+    # LambdaCable.
+    ENV['LAMBDA_CABLE_LOG_LEVEL'] = "debug"
+    ENV['LAMBDA_CABLE_CONNECTIONS_TABLE'] = "websocket-demo-live-WSTableConnections-NNRTHMFOPZSX"
+    ENV['LAMBDA_CABLE_SUBSCRIPTIONS_TABLE'] = "websocket-demo-live-WSTableSubscriptions-11BPGHNABCQ6Z"
+    require 'lambda_cable'
+    # LambdaPunch.
+    ENV['LAMBDA_PUNCH_LOG_LEVEL'] = "debug"
+    require 'lambda_punch'
+    require 'concurrent'
+    class LambdaPunch::ConcurrentQueue
+      include Concurrent::Async
+      def call ; sleep 0.1 ; LambdaPunch::Queue.new.call ; end
+    end
+    LambdaPunch.define_method(:handled!) do |context| 
+      LambdaPunch::ConcurrentQueue.new.async.call
+    end
+    LambdaPunch.error_handler = lambda do |e| 
+      LambdaPunch.logger.error "Queue#call::error => #{e.message}"
+      LambdaPunch.logger.error e.backtrace[0..10].join("\n")
+    end
+    # Simulate production RAILS_LOG_TO_STDOUT.
+    logger           = ActiveSupport::Logger.new(STDOUT)
+    logger.formatter = config.log_formatter
+    config.logger    = ActiveSupport::TaggedLogging.new(logger)
+    # Force local development Rails behavior.
+    config.web_console.permissions = IPAddr.new("0.0.0.0/0")
+    config.host_authorization = { exclude: ->(_) { true } }
+    config.hosts += [IPAddr.new("0.0.0.0/0"), IPAddr.new("::/0")]
+    # ActionCable
+    config.action_cable.allowed_request_origins = ['https://websockets-live.lamby.cloud']
+    config.to_prepare { 
+      ActionCable::Server::Base.config.cable = {'adapter' => 'lambda_cable'}
+    }
+  end
 end

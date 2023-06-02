@@ -119,6 +119,11 @@ config.session_store :cookie_store, expire_after: 1.day, key: '_session'
 ## Testing Connection Timeout
 
 ```shell
+wscat --connect wss://websockets-live.lamby.cloud/cable \
+      --origin "https://websockets-live.lamby.cloud" \
+      --header "Sec-WebSocket-Protocol:actioncable-v1-json" \
+      --protocol "13"
+
 wscat --connect wss://websockets.lamby.cloud/cable \
       --origin "https://websockets.lamby.cloud" \
       --header "Sec-WebSocket-Protocol:actioncable-v1-json" \
@@ -206,20 +211,9 @@ Since there are no "servers" there are no collection of instances holding on "co
 
 ### Adding CloudFront Distribution
 
-You will need the the API Gateway's Physical ID that was created in your CloudFormation stack. You can navigate to that stack, click the "Resources" tab and find the `WSApi` Logical ID matching the name in your `template.yaml` file. The Physical ID should look something like `3iku9itbbb`. This along with the AWS Region where you stack is deployed will be used for the origin domain.
+Assuming you used our [cookiecutter project](https://lamby.cloud/docs/quick-start), you will need both the WebSocket API Gateway's Physical ID and the HTTP Function URL for your Lambda that was created in your CloudFormation stack. For API Gateway, navigate to that stack, click the "Resources" tab and find the `WSApi` Logical ID matching the name in your `template.yaml` file. The Physical ID should look something like `3iku9itbbb`. Steps to get your Function URL will be included in later steps.
 
-From the CloudFront Distribution created in the Custom Domain Names
-
-- Click "Origins" tab
-- Click "Create origin" button
-- Origin domain: Ex: 3iku9itbbb.execute-api.us-east-1.amazonaws.com (⚠️ Use proper region)
-- Protocol: HTTPS only
-  Minimum origin SSL protocol: TLSv1
-- Origin path: (none)
-- Add Custom Header: X-Forwarded-Host myapp.example.com
-- Name: apigw (up to you)
-
-Before we create a new `/cable` path behavior, we are going to need to create a new origin request policy [specifically for WebSockets](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-working-with.websockets.html). From CloudFront **main** screen:
+First, we are going to need to create a new origin request policy [specifically for WebSockets](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-working-with.websockets.html). From CloudFront **main** screen:
 
 - Click "Policies" in left panel
 - Click "Origin request" tab
@@ -234,7 +228,18 @@ Before we create a new `/cable` path behavior, we are going to need to create a 
 - Query strings: None
 - Cookies: All
 
-Now, return to your specific CloudFront distribution so we can setup your `/cable` behavior.
+Now follow the guides on our [Simple CloudFront Distribution](https://lamby.cloud/docs/custom-domain#simple-cloudfront-distribution) page and create a new distribution that will route traffic to your Function URL. Remember to create the Route53 entry during this step too. Once completed, here are the steps to create the origin for your `/cable` WebSockets path to use API Gateway. Reminder, this is where you will need your the Physical ID of your `WSApi` for the origin domain.
+
+- Click "Origins" tab
+- Click "Create origin" button
+- Origin domain: Ex: 3iku9itbbb.execute-api.us-east-1.amazonaws.com (⚠️ Use proper region. No wss://)
+- Protocol: HTTPS only
+  Minimum origin SSL protocol: TLSv1 (⚠️ v1.2 will NOT work)
+- Origin path: (none)
+- Add Custom Header: X-Forwarded-Host myapp.example.com
+- Name: apigw (up to you)
+
+Now, we can create teh `/cable` behavior to use this new origin.
 
 - Click "Behaviors" tab
 - Click "Create behavior" 
