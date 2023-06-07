@@ -33,7 +33,7 @@ Resources:
     Properties:
       FunctionUrlConfig:
         AuthType: NONE
-      MemorySize: 3008
+      MemorySize: 512
       PackageType: Image
 
   WSTableConnections:
