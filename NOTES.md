@@ -37,28 +37,20 @@
 - [ ] Connection
   - [x] Unwind `subscribe_to_internal_channel`.
 - [ ] Server
-  - [ ] #event_loop<StreamEventLoop>
-    - [ ] #timer, #post, #attach, #detach, #writes_pending, #stop
-  - [x] Connections (heartbeat)
 - [ ] Subscriptions
 - [ ] Channels
 - [ ] Channel::PeriodicTimers (maybe use CloudWatch)
   - [ ] https://api.rubyonrails.org/v6.1.3/classes/ActionCable/Channel/PeriodicTimers/ClassMethods.html
-- [x] Are pings client side or server side? If server, ignore due to no timeouts?
 
-Internal Channel:
+Internal Channel & Disconnects
 
-```json
-Connection::InternalChannel#subscribe_to_internal_channel
-pubsub.subscribe(internal_channel, callback)
-"websocket-demo:action_cable/Z2lkOi8vbGFtYnktd3MvVXNlci9Qcm9mLitBYmUrRWJlcnQ"
-```
-
-First Subscribe:
-
-```json
-LambdaCable::Connection::Subscriptions#add
-{"command":"subscribe","identifier":"{\"channel\":\"Turbo::StreamsChannel\",\"signed_stream_name\":\"IloybGtPaTh2YkdGdFlua3RkM012VW05dmJTOHgi--38562feb9cd334e9de85098412c02e4693fc606663ce97cd6a56c7e3162821a1\"}"}
+```ruby
+current_user = User.find('Clint Schroeder')
+current_connection = ActionCable.server.remote_connections.where current_user: current_user
+current_connection.disconnect
+[ActionCable] Broadcasting to action_cable/Z2lkOi8vd2Vic29ja2V0LWRlbW8vVXNlci9DbGludCtTY2hyb2VkZXI: {:type=>"disconnect"}
+[LambdaCable] [DEBUG] SubscriptionAdapter#initialize                  
+[LambdaCable] [DEBUG] SubscriptionAdapter#broadcast to "action_cable/Z2lkOi8vd2Vic29ja2V0LWRlbW8vVXNlci9DbGludCtTY2hyb2VkZXI" with payload "{\"type\":\"disconnect\"}"
 ```
 
 Undo temp JS comment out:
@@ -75,10 +67,20 @@ consumer.disconnect();
 
 
 
-----
-Docs
-----
 
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
+
+* Talk about how pings are sent. 60s from client side.
+
+
+------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
 
 ## Installs
 

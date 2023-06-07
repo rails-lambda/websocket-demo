@@ -8,18 +8,15 @@ module LambdaCable
       end
 
       def attach(*args)
-        LambdaCable.logger.debug "[DEBUG] [NOP] LambdaCable::Connection::StreamEventLoop#attach"
-        # TODO: See Connection::Stream#hijack_rack_socket
+        LambdaCable.logger.debug "[DEBUG] [⚠️] LambdaCable::Connection::StreamEventLoop#attach called!!!"
       end
 
       def detach(*args)
-        LambdaCable.logger.debug "[DEBUG] [NOP] LambdaCable::Connection::StreamEventLoop#detach"
-        # TODO: See Connection::Stream#clean_rack_hijack
+        LambdaCable.logger.debug "[DEBUG] [⚠️] LambdaCable::Connection::StreamEventLoop#detach called!!!"
       end
 
       def writes_pending(*args)
-        LambdaCable.logger.debug "[DEBUG] [NOP] LambdaCable::Connection::StreamEventLoop#writes_pending"
-        # TODO: See Connection::Stream#write(data)
+        LambdaCable.logger.debug "[DEBUG] [⚠️] LambdaCable::Connection::StreamEventLoop#writes_pending called!!!"
       end
 
       def stop
