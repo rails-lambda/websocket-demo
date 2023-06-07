@@ -28,6 +28,7 @@ module LambdaCable
         resp = LambdaCable.dynamodb_client.get_item table_name: table_name, key: { identifier: identifier }
         resp.item
       rescue Aws::DynamoDB::Errors::ResourceNotFoundException
+        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::SubscriptionsDb#get ERROR!"
         nil
       end
 
@@ -37,15 +38,16 @@ module LambdaCable
       end
 
       def items
+        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::SubscriptionsDb#items"
         resp = LambdaCable.dynamodb_client.query( 
           table_name: table_name, 
           index_name: 'connection_id_index',
           key_condition_expression: "connection_id = :connection_id", 
           expression_attribute_values: { ":connection_id" => connection_id }
         )
-        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::SubscriptionsDb#items resp.items: #{resp.items.inspect}"
         resp.items
       rescue Aws::DynamoDB::Errors::ResourceNotFoundException
+        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::SubscriptionsDb#items ERROR!"
         []
       end
 
