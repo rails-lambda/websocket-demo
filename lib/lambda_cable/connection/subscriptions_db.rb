@@ -1,7 +1,8 @@
-require 'aws-sdk-dynamodb'
-
 module LambdaCable
   module Connection
+    # This class fronts the Subscriptions DynamoDB table yet is typed to act like a Hash so that 
+    # can be used for the `ActionCable::Connection::Subscriptions` `@subscriptions`` instance variable.
+    # 
     class SubscriptionsDb
       include LambdaCable::RackEnvConcerns
 
@@ -14,21 +15,35 @@ module LambdaCable
       end
 
       def initialize(connection)
-        @connection = connection
+        @connection = connection        
       end
 
-      def add(data)
-        LambdaCable.logger.debug "[DEBUG] LambdaCable::Server::SubscriptionsDb#open identifier: #{identifier}"
-        LambdaCable.dynamodb_client.put_item table_name: table_name, item: item
+      def put(identifier)
+        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::SubscriptionsDb#put identifier: #{identifier}"
+        LambdaCable.dynamodb_client.put_item table_name: table_name, item: item(identifier)
       end
 
-      def find_all
+      def get(identifier)
+        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::SubscriptionsDb#get identifier: #{identifier}"
+        resp = LambdaCable.dynamodb_client.get_item table_name: table_name, key: { identifier: identifier }
+        resp.item
+      rescue Aws::DynamoDB::Errors::ResourceNotFoundException
+        nil
+      end
+
+      def delete(identifier)
+        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::SubscriptionsDb#delete identifier: #{identifier}"
+        LambdaCable.dynamodb_client.delete_item table_name: table_name, key: { identifier: identifier }
+      end
+
+      def items
         resp = LambdaCable.dynamodb_client.query( 
           table_name: table_name, 
           index_name: 'connection_id_index',
           key_condition_expression: "connection_id = :connection_id", 
           expression_attribute_values: { ":connection_id" => connection_id }
         )
+        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::SubscriptionsDb#items resp.items: #{resp.items.inspect}"
         resp.items
       rescue Aws::DynamoDB::Errors::ResourceNotFoundException
         []
@@ -38,13 +53,9 @@ module LambdaCable
 
       attr_reader :connection
 
-      def item
+      def item(identifier)
         { identifier: identifier,
           connection_id: connection_id }
-      end
-
-      def current_time_value
-        Time.current.to_fs(:db)
       end
 
       def connection_id
@@ -55,10 +66,3 @@ module LambdaCable
     end
   end
 end
-
-# def find(identifier)
-#   resp = LambdaCable.dynamodb_client.get_item table_name: table_name, key: { identifier: identifier }
-#   resp.item
-# rescue Aws::DynamoDB::Errors::ResourceNotFoundException
-#   nil
-# end

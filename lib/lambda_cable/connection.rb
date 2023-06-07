@@ -9,6 +9,7 @@ module LambdaCable
       autoload :MessageBuffer
       autoload :StreamEventLoop
       autoload :Subscriptions
+      autoload :SubscriptionsCollection
       autoload :SubscriptionsDb
       autoload :WebSocket
     end

@@ -1,5 +1,3 @@
-require 'aws-sdk-dynamodb'
-
 module LambdaCable
   module Server
     class ConnectionsDb
