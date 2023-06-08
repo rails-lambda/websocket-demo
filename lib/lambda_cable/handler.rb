@@ -13,6 +13,8 @@ module LambdaCable
 
     def initialize(event, context)
       @event, @context = event, context
+      ActiveSupport::CurrentAttributes.reset_all
+      LambdaCable::Current.connection_id = connection_id
     end
 
     def handle

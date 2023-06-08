@@ -4,6 +4,8 @@ module LambdaCable
     # 
     module Subscriptions
 
+      # Override: We override `@subscriptions` to use our own `SubscriptionsCollection` class.
+      # 
       def initialize(connection)
         super
         @subscriptions = SubscriptionsCollection.new(connection)

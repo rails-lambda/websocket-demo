@@ -4,45 +4,92 @@
 - [ ] Add username to chat window messages.
 - [ ] Show total connected users in some top area.
   - [ ] https://www.youtube.com/watch?v=OcWdFSg11T8
-- [ ] ...
+- [ ] Admin to see all logged in users.
+- [ ] Allow someone to enter their own/any name.
+- [ ] Maybe hook into social auth to lock this down a bit?
+- [ ] Admin for global Server#open_connections_statistics or whatever?
 
 ## Questions/Followups
 
 - [ ] Set SECRET_KEY_BASE in SSM.
-- [x] Will we really need unique `DockerTag` properties? Maybe we can remove that?
-- [ ] Within the `WSPolicy` call out how this needs the `RailsLambda` name and `RailsLambdaRole`.
-- [ ] If you make your own Role, use that name instead!
+- [ ] Should Server::Base#worker_pool be custom?
 - [ ] Does any of the ActionCable uses ActiveJob for background processing?
 - [ ] Do we need `channel_prefix` in any way? DynamoDB optimization maybe?
-- [x] Where does `Sec-WebSocket-Protocol: actioncable-v1-json` come in?
 - [x] Will this work? `ActionCable.server.remote_connections.where(current_user: User.find(1)).disconnect`
   - [x] We would have to find a way to get the API GW connection_id from a user?
   - [x] Hook this up to logout. https://stackoverflow.com/questions/40495351/how-to-close-connection-in-action-cable 
 - [ ] Make standalone API Gateway URLs work besides assuming /cable.
-- [x] Should `connection_class` be custom vs. `ActionCable::Connection::Base`?
 - [ ] Should we set `worker_pool_size` from default 4 to something else?
-- [ ] Create gem. Dev & Runtime Deps.
 - [ ] How does a "server" subscribe to an internal channel so it can disconnect folks?
 - [ ] Test `ActionCable::Connection::Authorization::UnauthorizedError` does a clean close.
+- [ ] What if there are no identifiers? Like no current user? Does AC even support such a thing? Patterns?
 - [x] Dig into logout. Do unsubscribes work? Is $disconnect called? Many times? 
-- [ ] Do some sort of DynamoDB stream for Connection -> Delete -> Subscriptions cleanup.
 - [x] Make sure `restore_from` calls `connect` if respond to. Nope, see docs.
 - [x] Wire up `disconnect` for Channel.
 - [ ] Make sure deploys do disconnects. How? Then document it.
 - [ ] How is JavaScript only loaded when LambdaCable is used?
 - [ ] Hook up all `ActiveSupport::Notifications` to CloudWatch Embedded Metrics?
 
+## DynamoDB Table Design
+
+- Should we put everything into a single table?
+- Do some sort of DynamoDB stream for Connection -> Delete -> Subscriptions cleanup.
+
 ## Next Up?
 
 - [ ] Connection
+  - [ ] Negative state callbacks when instantiating them again?
   - [x] Unwind `subscribe_to_internal_channel`.
 - [ ] Server
 - [ ] Subscriptions
+  - [ ] Negative state callbacks when instantiating them again in `SubscriptionsCollection`?
 - [ ] Channels
 - [ ] Channel::PeriodicTimers (maybe use CloudWatch)
   - [ ] https://api.rubyonrails.org/v6.1.3/classes/ActionCable/Channel/PeriodicTimers/ClassMethods.html
 
-Internal Channel & Disconnects
+
+## PubSub Adapter
+
+```log
+[LambdaCable] [DEBUG] LambdaCable::Handler#handle route_key: "connect" connection_id: "GKSQXe6loAMCKNQ="
+Started GET "/cable" for 130.176.137.83 at 2023-06-07 18:20:27 +0000
+[LambdaCable] [DEBUG] [NOP] LambdaCable::Server::Connections#setup_heartbeat_timer
+[LambdaCable] [DEBUG] LambdaCable::Connection::SubscriptionsCollection#initialize
+Started GET "/cable" [WebSocket] for 130.176.137.83 at 2023-06-07 18:20:28 +0000
+Successfully upgraded to WebSocket (REQUEST_METHOD: GET, HTTP_CONNECTION: , HTTP_UPGRADE: )
+[LambdaCable] [DEBUG] LambdaPunch.handling...
+[LambdaCable] [DEBUG] [NOP] LambdaCable::Connection::InternalChannel#subscribe_to_internal_channel internal_channel: "action_cable/Z2lkOi8vd2Vic29ja2V0LWRlbW8vVXNlci9NaXR0aWUrUmVpY2hlcnQ"
+[LambdaCable] [DEBUG] LambdaCable::Connection::WebSocket#transmit connection_id: GKSQXe6loAMCKNQ= data: "{\"type\":\"welcome\",\"connection_id\":\"GKSQXe6loAMCKNQ=\"}"
+[LambdaCable] [DEBUG] [NOP] LambdaCable::Connection::MessageBuffer#process!
+[LambdaCable] [DEBUG] [NOP] LambdaCable::Server::Connections#add_connection
+[LambdaCable] [DEBUG] LambdaCable::Server::ConnectionsDb#open connection_id: GKSQXe6loAMCKNQ=, connection_identifier: Z2lkOi8vd2Vic29ja2V0LWRlbW8vVXNlci9NaXR0aWUrUmVpY2hlcnQ
+
+[LambdaCable] [DEBUG] LambdaCable::Handler#handle route_key: "default" connection_id: "GKSQXe6loAMCKNQ="
+[LambdaCable] [DEBUG] LambdaCable::Server::ConnectionsDb#update connection_id: GKSQXe6loAMCKNQ=
+[LambdaCable] [DEBUG] LambdaCable::Connection::SubscriptionsCollection#initialize
+[LambdaCable] [DEBUG] LambdaCable::Connection::WebSocket#alive? connection_id: GKSQXe6loAMCKNQ=
+[LambdaCable] [DEBUG] LambdaCable::Connection::SubscriptionsCollection#[]= identifier: {"channel":"Turbo::StreamsChannel","signed_stream_name":"IloybGtPaTh2ZDJWaWMyOWphMlYwTFdSbGJXOHZVbTl2YlM4eCI=--904534f77fef880cf98202f7620bff7028bc80642052fa350c0e67054adf530e"}
+[LambdaCable] [DEBUG] LambdaCable::Connection::SubscriptionsDb#put identifier: {"channel":"Turbo::StreamsChannel","signed_stream_name":"IloybGtPaTh2ZDJWaWMyOWphMlYwTFdSbGJXOHZVbTl2YlM4eCI=--904534f77fef880cf98202f7620bff7028bc80642052fa350c0e67054adf530e"}
+[LambdaCable] [DEBUG] LambdaCable::Connection::StreamEventLoop#post
+[LambdaCable] [DEBUG] LambdaPunch.handling...
+[LambdaCable] [DEBUG] SubscriptionAdapter#initialize
+[LambdaCable] [DEBUG] SubscriptionAdapter#subscribe to "Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8x" with message_callback #<Proc:0x0000ffff57606fb0 /workspaces/websocket-demo/vendor/bundle/ruby/3.2.0/gems/actioncable-7.0.4.2/lib/action_cable/channel/streams.rb:149 (lambda)> and success_callback #<Proc:0x0000ffff575ffd28 /workspaces/websocket-demo/vendor/bundle/ruby/3.2.0/gems/actioncable-7.0.4.2/lib/action_cable/channel/streams.rb:88 (lambda)>
+Turbo::StreamsChannel is transmitting the subscription confirmation
+[LambdaCable] [DEBUG] LambdaCable::Connection::WebSocket#transmit connection_id: GKSQXe6loAMCKNQ= data: "{\"identifier\":\"{\\\"channel\\\":\\\"Turbo::StreamsChannel\\\",\\\"signed_stream_name\\\":\\\"IloybGtPaTh2ZDJWaWMyOWphMlYwTFdSbGJXOHZVbTl2YlM4eCI=--904534f77fef880cf98202f7620bff7028bc80642052fa350c0e67054adf530e\\\"}\",\"type\":\"confirm_subscription\"}"
+Turbo::StreamsChannel is streaming from Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8x
+[LambdaCable] [DEBUG] LambdaCable::Server::ConnectionsDb#update connection_id: GKSQXe6loAMCKNQ=
+```
+
+```ruby
+signed_stream_name = "IloybGtPaTh2ZDJWaWMyOWphMlYwTFdSbGJXOHZVbTl2YlM4eCI=--904534f77fef880cf98202f7620bff7028bc80642052fa350c0e67054adf530e"
+Turbo::StreamsChannel.verified_stream_name(signed_stream_name)
+=> "Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8x"
+
+GlobalID::Locator.locate "Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8x"
+=> #<Room:0x0000ffffa284d3a0 id: 1, name: "Lambda", created_at: Tue, 06 Jun 2023 22:24:05.638893000 UTC +00:00, updated_at: Tue, 06 Jun 2
+```
+
+## Internal Channel & Disconnects
 
 ```ruby
 current_user = User.find('Clint Schroeder')
@@ -53,7 +100,7 @@ current_connection.disconnect
 [LambdaCable] [DEBUG] SubscriptionAdapter#broadcast to "action_cable/Z2lkOi8vd2Vic29ja2V0LWRlbW8vVXNlci9DbGludCtTY2hyb2VkZXI" with payload "{\"type\":\"disconnect\"}"
 ```
 
-Undo temp JS comment out:
+## Undo temp JS comment out:
 
 ```javascript
 consumer.disconnect();
@@ -76,8 +123,11 @@ consumer.disconnect();
 ------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------
 
+* Talk about no Server#connections...
 * Talk about how pings are sent. 60s from client side.
-
+* Channel instances are NO LONGER "long-lived". Talk about what this means. Like ivar usage (see @room & speak examples). Pros/cons.
+* Within the `WSPolicy` call out how this needs the `RailsLambda` name and `RailsLambdaRole`.
+* If you make your own Role, use that name instead!
 
 ------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------

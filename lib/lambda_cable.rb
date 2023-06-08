@@ -7,6 +7,7 @@ require 'lamby'
 require 'base64'
 require 'logger'
 require 'action_cable'
+require 'active_support/current_attributes' 
 require 'lambda_cable/version'
 # Force freedom patching with Module.prepend.
 require 'lambda_cable/rack_env_concerns'
@@ -18,6 +19,7 @@ ActionCable::Server::Base.config.worker_pool_size = 1
 module LambdaCable
   extend ActiveSupport::Autoload
 
+  autoload :Current
   autoload :Handler
   autoload :Logger
   autoload :RackEnvConcerns

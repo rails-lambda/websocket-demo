@@ -22,12 +22,12 @@ module LambdaCable
       end
 
       def [](identifier)
-        LambdaCable.logger.debug "[DEBUG] LambdaCable::Server::SubscriptionsCollection#[] identifier: #{identifier}"
+        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::SubscriptionsCollection#[] identifier: #{identifier}"
         collection_safe[identifier] || collection_lazy_load(identifier)
       end
 
       def []=(identifier, subscription)
-        LambdaCable.logger.debug "[DEBUG] LambdaCable::Server::SubscriptionsCollection#[]= identifier: #{identifier}"
+        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::SubscriptionsCollection#[]= identifier: #{identifier}"
         subscriptions_db.put(identifier)
         collection_safe[identifier] = subscription
       end
@@ -78,7 +78,7 @@ module LambdaCable
       end
 
       def item_to_subscription(item)
-        LambdaCable.logger.debug "[DEBUG] LambdaCable::Server::SubscriptionsCollection#item_to_subscription item: #{item.inspect}"
+        LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::SubscriptionsCollection#item_to_subscription item: #{item.inspect}"
         return unless item
         id_key = item['identifier']
         id_options = ActiveSupport::JSON.decode(id_key).with_indifferent_access
