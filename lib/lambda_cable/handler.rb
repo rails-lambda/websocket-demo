@@ -13,8 +13,6 @@ module LambdaCable
 
     def initialize(event, context)
       @event, @context = event, context
-      ActiveSupport::CurrentAttributes.reset_all
-      LambdaCable::Current.connection_id = connection_id
     end
 
     def handle
@@ -30,11 +28,14 @@ module LambdaCable
     end
 
     def default
+      return { statusCode: 410 } unless connection
       connection.dispatch_lambda_message(websocket_message)
       { statusCode: 200 }
+      # close(reason: ActionCable::INTERNAL[:disconnect_reasons][:unauthorized], reconnect: false) if websocket.alive?
     end
 
     def disconnect
+      return { statusCode: 410 } unless connection
       connection.send_async :handle_close
       { statusCode: 200 }
     end

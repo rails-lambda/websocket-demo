@@ -20,10 +20,14 @@ module LambdaCable
         @dynamodb = LambdaCable::Server::ConnectionsDb.new(event, context, event_target)
       end
 
+      # Interface: Always true from the perspective of the server. See #alive? for client perspective.
+      # 
       def possible?
         true
       end
 
+      # Interface: Check API Gateway for connection status. If gone, allow the connection to receive the close event.
+      # 
       def alive?
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#alive? connection_id: #{connection_id}"
         client.get_connection connection_id: connection_id
@@ -32,6 +36,9 @@ module LambdaCable
         false
       end
 
+      # Interface: Send data to the client via API Gateway. If not gone, update the connection's TTL in DynamoDB.
+      # If we receive any error from API Gateway, we delete the connection state from DynamoDB.
+      # 
       def transmit(data)
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#transmit connection_id: #{connection_id} data: #{data.inspect}"
         client.post_to_connection data: data, connection_id: connection_id
@@ -40,6 +47,8 @@ module LambdaCable
         close
       end
 
+      # Interface: Close the connection in API Gateway first, then in the background, delete the connection in DynamoDB.
+      # 
       def close
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#close connection_id: #{connection_id}"
         LambdaPunch.push { dynamodb.close }
@@ -47,10 +56,15 @@ module LambdaCable
       rescue *LambdaCable::Connection::Error::GoneExceptions
       end
 
+      # Interface: Always wss protocol for API Gateway.
+      # 
       def protocol
         'wss'
       end
 
+      # Interface: Rack initiates the WebSocket connection and needs a basic response. See the #open method 
+      # for the coordination around how the connection is opened and #rack_response_headers for the headers.
+      # 
       def rack_response
         open
         [ 200, rack_response_headers, [] ]
@@ -70,10 +84,14 @@ module LambdaCable
         LambdaPunch.push { dynamodb.open }
       end
 
+      # Simple memoized API Gateway client. Pulls the endpoint from the Lambda event.
+      # 
       def client
         @client ||= Aws::ApiGatewayManagementApi::Client.new region: ENV['AWS_REGION'], endpoint: apigw_endpoint
       end
 
+      # We select the first protocol that matches ActionCable protocols.
+      # 
       def rack_response_headers
         protocols = lambda_event.dig 'headers', 'Sec-WebSocket-Protocol'
         return {} unless protocols
