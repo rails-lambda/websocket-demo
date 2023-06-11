@@ -22,6 +22,7 @@ module LambdaCable
   autoload :Configuration
   autoload :Current
   autoload :Handler
+  autoload :Helpers
   autoload :Logger
   autoload :RackEnvConcerns
   autoload :SubscriptionAdapter
@@ -51,4 +52,3 @@ module LambdaCable
 end
 
 require 'lambda_cable/engine'
-require 'lambda_cable/helpers/lambda_cable_helpers'

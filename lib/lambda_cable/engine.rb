@@ -3,7 +3,7 @@ module LambdaCable
     config.lambda_cable = LambdaCable.config
 
     initializer 'lambda_cable.helpers', after: 'action_cable.helpers' do
-      ActionCable::Helpers::ActionCableHelper.prepend LambdaCable::Helpers::LambdaCableHelper
+      ActionCable::Helpers::ActionCableHelper.prepend LambdaCable::Helpers::ActionCableExtensions
     end
   end
 end

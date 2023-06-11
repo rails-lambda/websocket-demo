@@ -1,6 +1,6 @@
 module LambdaCable
   module Helpers
-    module LambdaCableHelper
+    module ActionCableExtensions
       # Override: Prepended to `ActionCable::Helpers::ActionCableHelper` so we can also add a meta 
       # tag for the adapter type. We use this to avoid loading this gems JavaScript file when the 
       # `lambda_cable` adapter is not used.

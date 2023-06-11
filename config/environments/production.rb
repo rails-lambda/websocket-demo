@@ -107,6 +107,7 @@ Rails.application.configure do
   #   { requestid: controller.request.request_id }
   # end
   require 'lambda_cable'
+  ActionCable::Helpers::ActionCableHelper.prepend LambdaCable::Helpers::ActionCableExtensions
   config.action_cable.allowed_request_origins = ['https://websockets.lamby.cloud']
   config.to_prepare { LambdaPunch.start_server! }
   config.lamby.handled_proc = Proc.new do |_event, context|
