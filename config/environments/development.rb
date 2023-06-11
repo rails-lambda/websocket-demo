@@ -75,21 +75,20 @@ Rails.application.configure do
     ENV['LAMBDA_CABLE_CONNECTIONS_TABLE'] = "websocket-demo-live-WSTableConnections-NNRTHMFOPZSX"
     ENV['LAMBDA_CABLE_SUBSCRIPTIONS_TABLE'] = "websocket-demo-live-WSTableSubscriptions-11BPGHNABCQ6Z"
     require 'lambda_cable'
+    ActionCable::Helpers::ActionCableHelper.prepend LambdaCable::Helpers::ActionCableExtensions
+    # MaybeLater
+    require 'maybe_later'
+    MaybeLater.config.max_threads = 1
+    MaybeLater.config.invoke_even_if_server_is_unsupported = true
+    MaybeLater.config.inline_by_default = true
     # LambdaPunch.
     ENV['LAMBDA_PUNCH_LOG_LEVEL'] = "debug"
     require 'lambda_punch'
-    ActionCable::Helpers::ActionCableHelper.prepend LambdaCable::Helpers::ActionCableExtensions
-    require 'concurrent'
-    class LambdaPunch::ConcurrentQueue
-      include Concurrent::Async
-      def call ; sleep 0.1 ; LambdaPunch::Queue.new.call ; end
+    config.lamby.handled_proc = Proc.new do |_e, c|
+      LambdaPunch.handled!(c)
     end
-    LambdaPunch.define_method(:handled!) do |context| 
-      LambdaPunch::ConcurrentQueue.new.async.call
-    end
-    LambdaPunch.error_handler = lambda do |e| 
-      LambdaPunch.logger.error "Queue#call::error => #{e.message}"
-      LambdaPunch.logger.error e.backtrace[0..10].join("\n")
+    LambdaPunch.define_method(:handled!) do |_|
+      MaybeLater.run(inline: true) { LambdaPunch::Queue.new.call }
     end
     # Simulate production RAILS_LOG_TO_STDOUT.
     logger           = ActiveSupport::Logger.new(STDOUT)

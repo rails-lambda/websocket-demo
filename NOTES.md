@@ -101,67 +101,6 @@ current_connection.disconnect
 [LambdaCable] [DEBUG] SubscriptionAdapter#broadcast to "action_cable/Z2lkOi8vd2Vic29ja2V0LWRlbW8vVXNlci9DbGludCtTY2hyb2VkZXI" with payload "{\"type\":\"disconnect\"}"
 ```
 
-## Undo temp JS comment out:
-
-```javascript
-consumer.disconnect();
-```
-
-## Distinct LambdaPunch?
-
-Is LambdaPunch for Web distinct from WebSocket function? Why does a send message have duplicates? Pings?
-
-```
-[LambdaCable] [DEBUG] LambdaCable::Server::ConnectionsDb#update connection_id: GWyzkc3PoAMCFcQ=
-Started POST "/rooms/2/messages" for 98.166.4.233 at 2023-06-11 13:27:25 +0000
-Processing by MessagesController#create as TURBO_STREAM
-  Parameters: {"authenticity_token"=>"[FILTERED]", "message"=>{"content"=>"test"}, "commit"=>"📨 Send", "room_id"=>"2"}
-  Room Load (1.8ms)  SELECT `rooms`.* FROM `rooms` WHERE `rooms`.`id` = 2 LIMIT 1
-  ↳ activerecord (7.0.4.2) lib/active_record/log_subscriber.rb:131:in `debug'
-  TRANSACTION (0.2ms)  BEGIN
-  ↳ activerecord (7.0.4.2) lib/active_record/log_subscriber.rb:131:in `debug'
-  Message Create (2.1ms)  INSERT INTO `messages` (`room_id`, `content`, `created_at`, `updated_at`) VALUES (2, 'test', '2023-06-11 13:27:25.658430', '2023-06-11 13:27:25.658430')
-  ↳ activerecord (7.0.4.2) lib/active_record/log_subscriber.rb:131:in `debug'
-  TRANSACTION (3.7ms)  COMMIT
-  ↳ activerecord (7.0.4.2) lib/active_record/log_subscriber.rb:131:in `debug'
-  Rendered messages/_message.html.erb (Duration: 2.9ms | Allocations: 27)
-[ActionCable] Broadcasting to Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8y: "<turbo-stream action=\"prepend\" target=\"messages\"><template><li id=\"message_12\" class=\"list-group-item d-flex justify-content-between align-items-start p-0\">\n  <div class=\"ms-0 me-3 px-3 py-2\">\n    test\n  </div>\n  <span class=\"badge bg-dark-subtle rounded-top-0\">\n    11 Jun 13:27...
-[LambdaCable] [DEBUG] SubscriptionAdapter#broadcast to "Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8y" with payload "\"\\u003cturbo-stream action=\\\"prepend\\\" target=\\\"messages\\\"\\u003e\\u003ctemplate\\u003e\\u003cli id=\\\"message_12\\\" class=\\\"list-group-item d-flex justify-content-between align-items-start p-0\\\"\\u003e\\n  \\u003cdiv class=\\\"ms-0 me-3 px-3 py-2\\\"\\u003e\\n    test\\n  \\u003c/div\\u003e\\n  \\u003cspan class=\\\"badge bg-dark-subtle rounded-top-0\\\"\\u003e\\n    11 Jun 13:27\\n  \\u003c/span\\u003e\\n\\u003c/li\\u003e\\n\\u003c/template\\u003e\\u003c/turbo-stream\\u003e\""
-  Rendering messages/create.turbo_stream.erb
-  Rendered messages/_message.html.erb (Duration: 0.1ms | Allocations: 23)
-  Rendered messages/create.turbo_stream.erb (Duration: 7.4ms | Allocations: 235)
-Completed 200 OK in 69ms (Views: 20.7ms | ActiveRecord: 7.9ms | Allocations: 2656)
-
-172.22.0.1 - - [11/Jun/2023:13:27:25 UTC] "POST / HTTP/1.1" 200 1753
-- -> /
-Turbo::StreamsChannel transmitting "<turbo-stream action=\"prepend\" target=\"messages\"><template><li id=\"message_12\" class=\"list-group-item d-flex justify-content-between align-items-start p-0\">\n  <div class=\"ms-0 me-3 px-3 py-2\">\n    test\n  </div>\n  <span class=\"badge bg-dark-subtle rounded-top-0\">\n    11 Jun 13:27... (via streamed from Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8y)
-[LambdaCable] [DEBUG] LambdaCable::Connection::WebSocket#transmit connection_id: GWytXe69oAMCIXQ= data: "{\"identifier\":\"{\\\"channel\\\":\\\"Turbo::StreamsChannel\\\",\\\"signed_stream_name\\\":\\\"IloybGtPaTh2ZDJWaWMyOWphMlYwTFdSbGJXOHZVbTl2YlM4eSI=--5b7bdb21b653e065ca26db8c29c5f4f353b70f0bb42d5c386d70231054088ea9\\\"}\",\"message\":\"\\u003cturbo-stream action=\\\"prepend\\\" target=\\\"messages\\\"\\u003e\\u003ctemplate\\u003e\\u003cli id=\\\"message_12\\\" class=\\\"list-group-item d-flex justify-content-between align-items-start p-0\\\"\\u003e\\n  \\u003cdiv class=\\\"ms-0 me-3 px-3 py-2\\\"\\u003e\\n    test\\n  \\u003c/div\\u003e\\n  \\u003cspan class=\\\"badge bg-dark-subtle rounded-top-0\\\"\\u003e\\n    11 Jun 13:27\\n  \\u003c/span\\u003e\\n\\u003c/li\\u003e\\n\\u003c/template\\u003e\\u003c/turbo-stream\\u003e\"}"
-[LambdaCable] [DEBUG] LambdaCable::Connection::WebSocket#close connection_id: GWytXe69oAMCIXQ=
-Turbo::StreamsChannel transmitting "<turbo-stream action=\"prepend\" target=\"messages\"><template><li id=\"message_12\" class=\"list-group-item d-flex justify-content-between align-items-start p-0\">\n  <div class=\"ms-0 me-3 px-3 py-2\">\n    test\n  </div>\n  <span class=\"badge bg-dark-subtle rounded-top-0\">\n    11 Jun 13:27... (via streamed from Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8y)
-[LambdaCable] [DEBUG] LambdaCable::Connection::WebSocket#transmit connection_id: GWytXe69oAMCIXQ= data: "{\"identifier\":\"{\\\"channel\\\":\\\"Turbo::StreamsChannel\\\",\\\"signed_stream_name\\\":\\\"IloybGtPaTh2ZDJWaWMyOWphMlYwTFdSbGJXOHZVbTl2YlM4eSI=--5b7bdb21b653e065ca26db8c29c5f4f353b70f0bb42d5c386d70231054088ea9\\\"}\",\"message\":\"\\u003cturbo-stream action=\\\"prepend\\\" target=\\\"messages\\\"\\u003e\\u003ctemplate\\u003e\\u003cli id=\\\"message_12\\\" class=\\\"list-group-item d-flex justify-content-between align-items-start p-0\\\"\\u003e\\n  \\u003cdiv class=\\\"ms-0 me-3 px-3 py-2\\\"\\u003e\\n    test\\n  \\u003c/div\\u003e\\n  \\u003cspan class=\\\"badge bg-dark-subtle rounded-top-0\\\"\\u003e\\n    11 Jun 13:27\\n  \\u003c/span\\u003e\\n\\u003c/li\\u003e\\n\\u003c/template\\u003e\\u003c/turbo-stream\\u003e\"}"
-[LambdaCable] [DEBUG] LambdaCable::Connection::WebSocket#close connection_id: GWytXe69oAMCIXQ=
-Turbo::StreamsChannel transmitting "<turbo-stream action=\"prepend\" target=\"messages\"><template><li id=\"message_12\" class=\"list-group-item d-flex justify-content-between align-items-start p-0\">\n  <div class=\"ms-0 me-3 px-3 py-2\">\n    test\n  </div>\n  <span class=\"badge bg-dark-subtle rounded-top-0\">\n    11 Jun 13:27... (via streamed from Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8y)
-[LambdaCable] [DEBUG] LambdaCable::Connection::WebSocket#transmit connection_id: GWyvNfVHoAMCERQ= data: "{\"identifier\":\"{\\\"channel\\\":\\\"Turbo::StreamsChannel\\\",\\\"signed_stream_name\\\":\\\"IloybGtPaTh2ZDJWaWMyOWphMlYwTFdSbGJXOHZVbTl2YlM4eSI=--5b7bdb21b653e065ca26db8c29c5f4f353b70f0bb42d5c386d70231054088ea9\\\"}\",\"message\":\"\\u003cturbo-stream action=\\\"prepend\\\" target=\\\"messages\\\"\\u003e\\u003ctemplate\\u003e\\u003cli id=\\\"message_12\\\" class=\\\"list-group-item d-flex justify-content-between align-items-start p-0\\\"\\u003e\\n  \\u003cdiv class=\\\"ms-0 me-3 px-3 py-2\\\"\\u003e\\n    test\\n  \\u003c/div\\u003e\\n  \\u003cspan class=\\\"badge bg-dark-subtle rounded-top-0\\\"\\u003e\\n    11 Jun 13:27\\n  \\u003c/span\\u003e\\n\\u003c/li\\u003e\\n\\u003c/template\\u003e\\u003c/turbo-stream\\u003e\"}"
-[LambdaCable] [DEBUG] LambdaCable::Connection::WebSocket#close connection_id: GWyvNfVHoAMCERQ=
-Turbo::StreamsChannel transmitting "<turbo-stream action=\"prepend\" target=\"messages\"><template><li id=\"message_12\" class=\"list-group-item d-flex justify-content-between align-items-start p-0\">\n  <div class=\"ms-0 me-3 px-3 py-2\">\n    test\n  </div>\n  <span class=\"badge bg-dark-subtle rounded-top-0\">\n    11 Jun 13:27... (via streamed from Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8y)
-[LambdaCable] [DEBUG] LambdaCable::Connection::WebSocket#transmit connection_id: GWywEc1EIAMCLYQ= data: "{\"identifier\":\"{\\\"channel\\\":\\\"Turbo::StreamsChannel\\\",\\\"signed_stream_name\\\":\\\"IloybGtPaTh2ZDJWaWMyOWphMlYwTFdSbGJXOHZVbTl2YlM4eSI=--5b7bdb21b653e065ca26db8c29c5f4f353b70f0bb42d5c386d70231054088ea9\\\"}\",\"message\":\"\\u003cturbo-stream action=\\\"prepend\\\" target=\\\"messages\\\"\\u003e\\u003ctemplate\\u003e\\u003cli id=\\\"message_12\\\" class=\\\"list-group-item d-flex justify-content-between align-items-start p-0\\\"\\u003e\\n  \\u003cdiv class=\\\"ms-0 me-3 px-3 py-2\\\"\\u003e\\n    test\\n  \\u003c/div\\u003e\\n  \\u003cspan class=\\\"badge bg-dark-subtle rounded-top-0\\\"\\u003e\\n    11 Jun 13:27\\n  \\u003c/span\\u003e\\n\\u003c/li\\u003e\\n\\u003c/template\\u003e\\u003c/turbo-stream\\u003e\"}"
-[LambdaCable] [DEBUG] LambdaCable::Connection::WebSocket#close connection_id: GWywEc1EIAMCLYQ=
-Turbo::StreamsChannel transmitting "<turbo-stream action=\"prepend\" target=\"messages\"><template><li id=\"message_12\" class=\"list-group-item d-flex justify-content-between align-items-start p-0\">\n  <div class=\"ms-0 me-3 px-3 py-2\">\n    test\n  </div>\n  <span class=\"badge bg-dark-subtle rounded-top-0\">\n    11 Jun 13:27... (via streamed from Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8y)
-[LambdaCable] [DEBUG] LambdaCable::Connection::WebSocket#transmit connection_id: GWyzkc3PoAMCFcQ= data: "{\"identifier\":\"{\\\"channel\\\":\\\"Turbo::StreamsChannel\\\",\\\"signed_stream_name\\\":\\\"IloybGtPaTh2ZDJWaWMyOWphMlYwTFdSbGJXOHZVbTl2YlM4eSI=--5b7bdb21b653e065ca26db8c29c5f4f353b70f0bb42d5c386d70231054088ea9\\\"}\",\"message\":\"\\u003cturbo-stream action=\\\"prepend\\\" target=\\\"messages\\\"\\u003e\\u003ctemplate\\u003e\\u003cli id=\\\"message_12\\\" class=\\\"list-group-item d-flex justify-content-between align-items-start p-0\\\"\\u003e\\n  \\u003cdiv class=\\\"ms-0 me-3 px-3 py-2\\\"\\u003e\\n    test\\n  \\u003c/div\\u003e\\n  \\u003cspan class=\\\"badge bg-dark-subtle rounded-top-0\\\"\\u003e\\n    11 Jun 13:27\\n  \\u003c/span\\u003e\\n\\u003c/li\\u003e\\n\\u003c/template\\u003e\\u003c/turbo-stream\\u003e\"}"
-[LambdaCable] 
-[DEBUG] LambdaCable::Handler#handle route_key: "default" connection_id: "GWyzkc3PoAMCFcQ="
-[LambdaCable] [DEBUG] LambdaCable::Connection::SubscriptionsCollection#initialize
-[LambdaCable] [DEBUG] LambdaCable::Connection::WebSocket#transmit connection_id: GWyzkc3PoAMCFcQ= data: "{\"type\":\"ping\",\"message\":1686490049}"
-[LambdaCable] [DEBUG] LambdaPunch.handling...
-172.22.0.1 - - [11/Jun/2023:13:27:29 UTC] "POST / HTTP/1.1" 200 18
-- -> /
-[LambdaCable] [DEBUG] LambdaCable::Server::ConnectionsDb#close connection_id: GWytXe69oAMCIXQ=
-[LambdaCable] [DEBUG] LambdaCable::Server::ConnectionsDb#close connection_id: GWytXe69oAMCIXQ=
-[LambdaCable] [DEBUG] LambdaCable::Server::ConnectionsDb#close connection_id: GWyvNfVHoAMCERQ=
-[LambdaCable] [DEBUG] LambdaCable::Server::ConnectionsDb#close connection_id: GWywEc1EIAMCLYQ=
-[LambdaCable] [DEBUG] LambdaCable::Server::ConnectionsDb#update connection_id: GWyzkc3PoAMCFcQ=
-[LambdaCable] [DEBUG] LambdaCable::Server::ConnectionsDb#update connection_id: GWyzkc3PoAMCFcQ=
-```
 
 
 

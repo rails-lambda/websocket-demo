@@ -26,6 +26,7 @@ end
 
 group :development do
   # gem "hotwire-livereload"
+  gem "maybe_later", require: false
   gem "planetscale_rails"
   gem "redis"
   gem "web-console"

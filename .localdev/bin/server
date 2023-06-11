@@ -1,4 +1,6 @@
 #!/bin/sh
 set -e
 
-LAMBDA_CABLE_LOCAL_PROXY=1 bundle exec rake lamby:proxy_server
+RAILS_MAX_THREADS=1 \
+LAMBDA_CABLE_LOCAL_PROXY=1 \
+  bundle exec rake lamby:proxy_server_puma
