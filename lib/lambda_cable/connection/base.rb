@@ -13,10 +13,11 @@ module LambdaCable
         def restore_from(event, context)
           connection_id = event.dig 'requestContext', 'connectionId'
           connected_event = LambdaCable::Server::ConnectionsDb.find(connection_id)&.[]('connected_event')
-          return unless connected_event
-          restored_event = event.dup.merge! JSON.parse(connected_event)
+          restored_event = event.dup.merge! JSON.parse(connected_event || '{}')
           restored_class = ActionCable.server.config.connection_class.call # Most likely ActionCable::Connection::Base
-          restored_class.new ActionCable.server, Lamby::RackRest.new(restored_event, context).env
+          restored_class.new(ActionCable.server, Lamby::RackRest.new(restored_event, context).env).tap do |connection|
+            connection.instance_variable_set :@restored, connected_event.present?
+          end
         end
 
       end
@@ -27,6 +28,7 @@ module LambdaCable
         super
         @websocket = LambdaCable::Connection::WebSocket.new_from(env, self)
         @message_buffer = LambdaCable::Connection::MessageBuffer.new(self)
+        @restored = false
       end
 
       # Override: So we can append a connection_id to the message. Helps with dev/debugging.
@@ -65,15 +67,47 @@ module LambdaCable
       # back and help keep that connection alive from the server-side. Primarily, it helps 
       # us keep DynamoDB connection table item's updated_at timestamp current.
       # 
-      def dispatch_lambda_message(websocket_message)
-        message = decode(websocket_message)
-        return beat if message['type'] == 'ping'
-        dispatch_websocket_message(websocket_message)
+      # If the connection is not restored properly, we close the WebSocket connection with
+      # a server restart reason. Meaning, we can delete DynamoDB items to simulate restarts.
+      # 
+      def lambda_default(websocket_message)
+        if restored?
+          case decode(websocket_message)['type']
+          when 'ping' then beat
+          else dispatch_websocket_message(websocket_message)
+          end
+          { statusCode: 200 }
+        else
+          close(reason: ActionCable::INTERNAL[:disconnect_reasons][:server_restart]) if websocket.alive?
+          { statusCode: 410 }
+        end
       end
 
+      # Main method for our Handler's $disconnect route key.
+      # 
+      def lambda_disconnect
+        if restored?
+          send_async :handle_close
+          { statusCode: 200 }
+        else
+          { statusCode: 410 }
+        end
+      end
+
+      # Allow #decode method to be a public interface.
+      # 
+      def public_decode(data)
+        decode(data)
+      end
+  
       private
+
+      # Indicates if the connection was restored from DynamoDB successfully or not.
+      # 
+      def restored?
+        @restored
+      end
 
     end
   end
 end
-

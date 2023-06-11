@@ -78,6 +78,7 @@ Rails.application.configure do
     # LambdaPunch.
     ENV['LAMBDA_PUNCH_LOG_LEVEL'] = "debug"
     require 'lambda_punch'
+    ActionCable::Helpers::ActionCableHelper.prepend LambdaCable::Helpers::LambdaCableHelper
     require 'concurrent'
     class LambdaPunch::ConcurrentQueue
       include Concurrent::Async

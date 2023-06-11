@@ -1,4 +1,4 @@
 #!/bin/sh
 set -e
 
-./bin/rails server
+./bin/rails server -b '0.0.0.0'

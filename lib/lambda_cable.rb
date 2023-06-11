@@ -19,6 +19,7 @@ ActionCable::Server::Base.config.worker_pool_size = 1
 module LambdaCable
   extend ActiveSupport::Autoload
 
+  autoload :Configuration
   autoload :Current
   autoload :Handler
   autoload :Logger
@@ -37,11 +38,17 @@ module LambdaCable
     @logger ||= LambdaCable::Logger.new.logger
   end
 
+  def self.config
+    @config ||= LambdaCable::Configuration.new
+  end
+
   def self.dynamodb_client
     @dynamodb_client ||= begin
       require 'aws-sdk-dynamodb'
       Aws::DynamoDB::Client.new region: ENV['AWS_REGION']
     end
   end
-
 end
+
+require 'lambda_cable/engine'
+require 'lambda_cable/helpers/lambda_cable_helpers'

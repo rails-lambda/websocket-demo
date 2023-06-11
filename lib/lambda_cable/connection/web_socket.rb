@@ -2,6 +2,9 @@ require 'aws-sdk-apigatewaymanagementapi'
 
 module LambdaCable
   module Connection
+    # Override in object for the ActionCable::Connection::Base's @websocket instance variable. Conforms to the same
+    # interface as ActionCable::Connection::WebSocket but speaks to API Gateway's managment API and DYnamoDB for state.
+    #
     class WebSocket
       include LambdaCable::RackEnvConcerns
 
@@ -37,12 +40,13 @@ module LambdaCable
       end
 
       # Interface: Send data to the client via API Gateway. If not gone, update the connection's TTL in DynamoDB.
-      # If we receive any error from API Gateway, we delete the connection state from DynamoDB.
+      # If we receive any error from API Gateway, we delete the connection state from DynamoDB. If we receive a
+      # disconnect message, we do not update the DynamoDB connections table.
       # 
       def transmit(data)
         LambdaCable.logger.debug "[DEBUG] LambdaCable::Connection::WebSocket#transmit connection_id: #{connection_id} data: #{data.inspect}"
         client.post_to_connection data: data, connection_id: connection_id
-        LambdaPunch.push { dynamodb.update }
+        LambdaPunch.push { dynamodb.update } unless event_target.public_decode(data)['type'] == 'disconnect'
       rescue *LambdaCable::Connection::Error::GoneExceptions
         close
       end
