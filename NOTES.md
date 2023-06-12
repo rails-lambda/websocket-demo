@@ -81,6 +81,13 @@ Turbo::StreamsChannel is streaming from Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8x
 [LambdaCable] [DEBUG] LambdaCable::Server::ConnectionsDb#update connection_id: GKSQXe6loAMCKNQ=
 ```
 
+Use these?
+
+```ruby
+ActiveSupport::CurrentAttributes.reset_all
+LambdaCable::Current.connection_id = connection_id
+```
+
 ```ruby
 signed_stream_name = "IloybGtPaTh2ZDJWaWMyOWphMlYwTFdSbGJXOHZVbTl2YlM4eCI=--904534f77fef880cf98202f7620bff7028bc80642052fa350c0e67054adf530e"
 Turbo::StreamsChannel.verified_stream_name(signed_stream_name)
@@ -100,7 +107,6 @@ current_connection.disconnect
 [LambdaCable] [DEBUG] SubscriptionAdapter#initialize                  
 [LambdaCable] [DEBUG] SubscriptionAdapter#broadcast to "action_cable/Z2lkOi8vd2Vic29ja2V0LWRlbW8vVXNlci9DbGludCtTY2hyb2VkZXI" with payload "{\"type\":\"disconnect\"}"
 ```
-
 
 
 
