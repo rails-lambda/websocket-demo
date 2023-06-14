@@ -49,7 +49,6 @@
 - [ ] Channel::PeriodicTimers (maybe use CloudWatch)
   - [ ] https://api.rubyonrails.org/v6.1.3/classes/ActionCable/Channel/PeriodicTimers/ClassMethods.html
 
-
 ## PubSub Adapter
 
 ```log
