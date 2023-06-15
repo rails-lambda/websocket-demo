@@ -9,7 +9,10 @@
   },
   "customizations": {
     "vscode": {
-      "extensions": ["rebornix.ruby"]
+      "extensions": [
+        "rebornix.ruby",
+        "CircleCI.circleci"
+      ]
     }
   },
   "features": {
