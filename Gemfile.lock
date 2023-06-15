@@ -129,7 +129,7 @@ GEM
       rake
       rb-inotify
       timeout
-    lamby (4.2.0)
+    lamby (4.3.0)
       rack
     lograge (0.12.0)
       actionpack (>= 4)
