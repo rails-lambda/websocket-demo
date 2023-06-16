@@ -124,12 +124,14 @@ GEM
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
     jmespath (1.6.2)
+    lambda-console-ruby (1.0.0)
     lambda_punch (1.1.1)
       concurrent-ruby
       rake
       rb-inotify
       timeout
-    lamby (4.3.0)
+    lamby (5.0.0)
+      lambda-console-ruby
       rack
     lograge (0.12.0)
       actionpack (>= 4)
