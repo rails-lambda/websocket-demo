@@ -17,9 +17,11 @@ module LambdaCable
 
     def handle
       LambdaCable.logger.debug "[DEBUG] LambdaCable::Handler#handle route_key: #{route_key.inspect} connection_id: #{connection_id.inspect}"
+      LambdaCable::Current.connection_id = connection_id
       send(route_key)
     ensure
       LambdaCable.logger.debug "[DEBUG] LambdaPunch.handling..."
+      # LambdaPunch.push { LambdaCable::Current.clear_all }
       LambdaPunch.handled!(context)
     end
 

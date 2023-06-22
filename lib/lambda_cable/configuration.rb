@@ -23,10 +23,24 @@ module LambdaCable
       @ping_interval = interval
     end
 
+    # The shared DynamoDB client used by connections and subscriptions.
+    # 
+    def dynamodb_client
+      @dynamodb_client ||= begin
+        require 'aws-sdk-dynamodb'
+        Aws::DynamoDB::Client.new region: ENV['AWS_REGION']
+      end
+    end
+
+    def dynamodb_client=(client)
+      @dynamodb_client = client
+    end
+
     private
 
     def initialize_defaults
       @ping_interval = 10000
+      @dynamodb_client = nil
     end
   end
 end

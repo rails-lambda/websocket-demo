@@ -15,6 +15,15 @@ module LambdaCable
           nil
         end
 
+        def find_identifier(connection_identifier)
+          resp = LambdaCable.dynamodb_client.query table_name: table_name, index_name: 'connection_identifier_index',
+            key_condition_expression: "connection_identifier = :connection_identifier", 
+            expression_attribute_values: { ":connection_identifier" => connection_identifier }
+          resp.items.first
+        rescue Aws::DynamoDB::Errors::ResourceNotFoundException
+          nil
+        end
+
         def table_name
           ENV['LAMBDA_CABLE_CONNECTIONS_TABLE']
         end

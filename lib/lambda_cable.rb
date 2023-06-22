@@ -44,10 +44,7 @@ module LambdaCable
   end
 
   def self.dynamodb_client
-    @dynamodb_client ||= begin
-      require 'aws-sdk-dynamodb'
-      Aws::DynamoDB::Client.new region: ENV['AWS_REGION']
-    end
+    config.dynamodb_client
   end
 end
 

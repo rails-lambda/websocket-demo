@@ -14,7 +14,6 @@
 - [ ] Set SECRET_KEY_BASE in SSM.
 - [ ] Should Server::Base#worker_pool be custom?
 - [ ] Does any of the ActionCable uses ActiveJob for background processing?
-- [ ] Do we need `channel_prefix` in any way? DynamoDB optimization maybe?
 - [x] Will this work? `ActionCable.server.remote_connections.where(current_user: User.find(1)).disconnect`
   - [x] We would have to find a way to get the API GW connection_id from a user?
   - [x] Hook this up to logout. https://stackoverflow.com/questions/40495351/how-to-close-connection-in-action-cable 
@@ -99,17 +98,18 @@ GlobalID::Locator.locate "Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8x"
 ## Internal Channel & Disconnects
 
 ```ruby
-current_user = User.find('Angelo Ritchie')
-current_connection = ActionCable.server.remote_connections.where current_user: current_user
-current_connection.disconnect
+name = "Micah O'Reilly"
+ActionCable.server.remote_connections.where(current_user: User.find(name)).disconnect
+
 [ActionCable] Broadcasting to action_cable/Z2lkOi8vd2Vic29ja2V0LWRlbW8vVXNlci9DbGludCtTY2hyb2VkZXI: {:type=>"disconnect"}
-[LambdaCable] [DEBUG] SubscriptionAdapter#initialize                  
+[LambdaCable] [DEBUG] SubscriptionAdapter#initialize
 [LambdaCable] [DEBUG] SubscriptionAdapter#broadcast to "action_cable/Z2lkOi8vd2Vic29ja2V0LWRlbW8vVXNlci9DbGludCtTY2hyb2VkZXI" with payload "{\"type\":\"disconnect\"}"
 ```
 
 
+[LambdaCable] [DEBUG] SubscriptionAdapter#subscribe to "Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8x" with message_callback #<Proc:0x0000ffff70ada6b8 /workspaces/websocket-demo/vendor/bundle/ruby/3.2.0/gems/actioncable-7.0.4.2/lib/action_cable/channel/streams.rb:149 (lambda)> and success_callback #<Proc:0x0000ffff70ad9740 /workspaces/websocket-demo/vendor/bundle/ruby/3.2.0/gems/actioncable-7.0.4.2/lib/action_cable/channel/streams.rb:88 (lambda)>
 
-
+[LambdaCable] [DEBUG] SubscriptionAdapter#broadcast to "Z2lkOi8vd2Vic29ja2V0LWRlbW8vUm9vbS8x" 
 
 
 
