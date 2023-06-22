@@ -11,7 +11,6 @@
 
 ## Questions/Followups
 
-- [ ] Remove aws.env in deploy.$$
 - [ ] Set SECRET_KEY_BASE in SSM.
 - [ ] Should Server::Base#worker_pool be custom?
 - [ ] Does any of the ActionCable uses ActiveJob for background processing?

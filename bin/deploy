@@ -40,7 +40,8 @@ if [ "$CI" = "true" ]; then
     node_modules \
     test \
     tmp \
-    vendor/bundle/ruby/*/cache
+    vendor/bundle/ruby/*/cache \
+    aws.env
 fi
 
 echo "== SAM build =="
